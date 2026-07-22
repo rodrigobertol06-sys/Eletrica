@@ -1,151 +1,169 @@
-/* style.css - Tema Dark Profissional */
+/* style.css - Painel Técnico Clademir Bertol */
 :root {
-    --bg-main: #070913;      /* Fundo escuro igual à planilha */
-    --card-bg: #0f172a;      /* Fundo dos blocos */
-    --card-border: #1e293b;  /* Borda sutil */
-    --accent: #fbb03b;       /* Amarelo de destaque */
-    --text-main: #f8fafc;    /* Texto claro */
-    --text-muted: #94a3b8;   /* Texto secundário */
+    --bg-main: #070913;
+    --card-bg: #ffffff;
+    --card-border: #e2e8f0;
+    --primary: #0b132b;
+    --accent: #fbb03b;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --radius: 16px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 body { background-color: var(--bg-main); color: var(--text-main); padding-bottom: 50px; }
 
-/* Barra Superior */
+/* Barra Superior Corporativa */
 .top-navbar {
-    background-color: #0b132b;
+    background-color: var(--primary);
     color: white;
-    padding: 15px 20px;
+    padding: 15px 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid var(--card-border);
-    margin-bottom: 25px;
+    border-bottom: 3px solid var(--accent);
+    margin-bottom: 30px;
 }
 
-.nav-brand { display: flex; align-items: center; gap: 12px; }
+.nav-brand { display: flex; align-items: center; gap: 15px; }
+.logo-img { height: 45px; width: auto; object-fit: contain; }
+.nav-titles h1 { font-size: 1.2rem; font-weight: 700; color: #fff; }
+.nav-titles p { font-size: 0.75rem; color: #94a3b8; }
+.nav-badge { background-color: #1e293b; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; color: var(--accent); font-weight: 600; border: 1px solid #334155; }
 
-/* Ajuste da Logo */
-.logo-img {
-    height: 40px;
-    width: auto;
-    object-fit: contain;
+/* Container Principal */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+/* Grade de Cards (Estilo Painel) */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
 }
 
-.nav-titles h1 { font-size: 1.1rem; font-weight: 700; color: #fff; }
-.nav-titles p { font-size: 0.75rem; color: var(--text-muted); }
-.nav-badge { background-color: #1e293b; padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; color: var(--accent); font-weight: 600; }
-
-/* Container */
-.container { max-width: 850px; margin: 0 auto; padding: 0 15px; }
-
-/* Balões Expansíveis (Details / Summary) */
-.balao-accordion {
+.card-modulo {
     background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     border: 1px solid var(--card-border);
-    border-radius: 12px;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    position: relative;
     overflow: hidden;
-    transition: border-color 0.2s;
 }
 
-.balao-accordion[open] {
+.card-modulo:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
     border-color: var(--accent);
 }
 
-.balao-accordion summary {
-    padding: 18px 20px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: var(--text-main);
-    background-color: #0f172a;
-    cursor: pointer;
+.card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 18px;
+}
+
+/* Cores de fundo dos ícones dos cards */
+.icon-calc { background-color: #e0f2fe; color: #0284c7; }
+.icon-guia { background-color: #fef3c7; color: #d97706; }
+.icon-orc { background-color: #d1fae5; color: #059669; }
+
+.card-modulo h3 { font-size: 1.2rem; color: var(--primary); margin-bottom: 8px; font-weight: 700; }
+.card-modulo p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.4; }
+
+/* Área de Telas/Ferramentas (Ocultas por padrão até clicar no card) */
+.ferramenta-container {
+    background: #ffffff;
+    border-radius: var(--radius);
+    padding: 30px;
+    margin-top: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: none; /* Abre via script */
+    border-top: 5px solid var(--accent);
+}
+
+.ferramenta-header {
+    display: flex;
     justify-content: space-between;
-    user-select: none;
+    align-items: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 15px;
 }
 
-.balao-accordion summary::-webkit-details-marker { display: none; }
+.ferramenta-header h2 { color: var(--primary); font-size: 1.4rem; display: flex; align-items: center; gap: 10px; }
+.btn-fechar { background: #fee2e2; color: #dc2626; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+.btn-fechar:hover { background: #fecaca; }
 
-.balao-accordion summary i.icone-titulo {
-    color: var(--accent);
-    margin-right: 10px;
+/* Formulários Internos dos Cálculos */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
-/* Seta indicadora de abrir/fechar */
-.balao-accordion summary::after {
-    content: '\f078';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    transition: transform 0.3s ease;
-}
-
-.balao-accordion[open] summary::after {
-    transform: rotate(180deg);
-    color: var(--accent);
-}
-
-/* Conteúdo interno do balão */
-.conteudo-balao {
-    padding: 20px;
-    background-color: #0b1120;
-    border-top: 1px solid var(--card-border);
-}
-
-/* Formulários Internos */
 .form-group { margin-bottom: 15px; }
-label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); }
+label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--primary); }
 input, select, textarea {
     width: 100%;
-    padding: 11px;
-    border: 1px solid #334155;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
     border-radius: 8px;
     font-size: 0.95rem;
-    background-color: #0f172a;
-    color: white;
+    background-color: #f8fafc;
 }
-input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: var(--accent);
-}
+input:focus, select:focus { outline: none; border-color: var(--accent); background: #fff; }
 
-button {
-    background-color: var(--accent);
-    color: #070913;
+.btn-acao {
+    background-color: var(--primary);
+    color: white;
     border: none;
-    padding: 12px;
+    padding: 14px;
     width: 100%;
     border-radius: 8px;
     font-weight: bold;
-    font-size: 0.95rem;
+    font-size: 1rem;
     cursor: pointer;
-    margin-top: 5px;
-    transition: opacity 0.2s;
+    transition: background 0.2s;
 }
-button:hover { opacity: 0.9; }
+.btn-acao:hover { background-color: #1e293b; }
 
-/* Caixas de Resposta */
+/* Resultados e Esquemas Visuais */
 .resultado-box {
-    background: #1e293b;
-    border-radius: 8px;
-    padding: 12px;
-    margin-top: 12px;
-    font-size: 0.9rem;
-    border: 1px solid #334155;
-    color: #38bdf8;
+    background: #f1f5f9;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    border-left: 4px solid var(--accent);
+    font-size: 0.95rem;
+    color: var(--primary);
 }
 
-.explicacao {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-top: 8px;
-    background: #172033;
-    padding: 10px;
-    border-radius: 6px;
-    border-left: 3px solid var(--accent);
-    line-height: 1.4;
+/* Estilo para os Diagramas de Ligação com Exemplos Visuais */
+.esquema-card {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 15px;
+}
+.esquema-card h4 { color: var(--primary); margin-bottom: 10px; font-size: 1.1rem; }
+.esquema-visual {
+    background: #0b132b;
+    color: #38bdf8;
+    padding: 15px;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    margin: 10px 0;
 }
