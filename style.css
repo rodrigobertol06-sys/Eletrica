@@ -1,0 +1,105 @@
+/* style.css */
+
+:root {
+    --primary-color: #0d2144;  /* Azul Marinho da Logo */
+    --accent-color: #fbb03b;  /* Amarelo/Laranja do Raio */
+    --text-color: #333;
+    --bg-color: #f4f7f6;
+    --card-bg: #ffffff;
+    --border-radius: 12px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { background-color: var(--bg-color); color: var(--text-color); padding: 20px; padding-bottom: 50px;}
+
+/* Cabeçalho com Logo */
+header { text-align: center; margin-bottom: 30px; }
+
+.logo-img { 
+    max-width: 180px; /* Ajuste o tamanho da logo aqui */
+    height: auto;
+    margin-bottom: 10px;
+}
+
+header h1 { font-size: 1.3rem; color: var(--primary-color); font-weight: 700; }
+header p { font-size: 0.9rem; color: #666; }
+
+/* Estilo dos Balões (Cards) */
+.balao {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    border-left: 5px solid var(--primary-color); /* Borda lateral padrão */
+    transition: box-shadow 0.3s ease;
+}
+
+.balao:hover { box-shadow: 0 6px 15px rgba(0,0,0,0.12); }
+
+.balao h2 { 
+    font-size: 1.15rem; 
+    margin-bottom: 15px; 
+    color: var(--primary-color); 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.balao h2 i { color: var(--accent-color); } /* Ícones na cor de destaque */
+
+/* Formulários e Botões */
+.form-group { margin-bottom: 15px; }
+label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: var(--primary-color); }
+input, select, textarea {
+    width: 100%; 
+    padding: 12px; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    font-size: 1rem;
+    background-color: #fafafa;
+    transition: border-color 0.3s;
+}
+
+input:focus, select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 2px rgba(251, 176, 59, 0.2); }
+
+button.btn-principal {
+    background-color: var(--primary-color); 
+    color: white; 
+    border: none; 
+    padding: 14px; 
+    width: 100%;
+    border-radius: 8px; 
+    font-weight: bold; 
+    font-size: 1.1rem; 
+    cursor: pointer; 
+    margin-top: 10px;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+button.btn-principal:hover { background-color: #123066; }
+button.btn-principal:active { transform: scale(0.98); }
+
+button.btn-salvar {
+    background-color: var(--accent-color); /* Cor de destaque para salvar */
+    color: var(--primary-color);
+}
+button.btn-salvar:hover { background-color: #e09e35; }
+
+/* Áreas de Resultado */
+.resultado-box {
+    background: #e8f0fe; 
+    border-radius: 8px; 
+    padding: 15px; 
+    margin-top: 15px; 
+    font-size: 0.95rem;
+    border: 1px solid #cce0ff;
+    color: var(--primary-color);
+}
+
+.explicacao { font-size: 0.85rem; color: #555; margin-top: 8px; line-height: 1.4; background: #fff3cd; padding: 10px; border-radius: 6px; border: 1px solid #ffeeba;}
+
+/* Ajuste específico para o balão de orçamento (para diferenciar visualmente) */
+.balao-orcamento { border-left-color: var(--accent-color); }
