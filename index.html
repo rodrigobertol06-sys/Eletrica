@@ -74,7 +74,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Tipo de Rede:</label>
+                    <label>Tipo de Rede Atual:</label>
                     <select id="tipoRede">
                         <option value="monofasico">Monofásico (1F + N)</option>
                         <option value="bifasico" selected>Bifásico (2F + N)</option>
@@ -304,7 +304,6 @@
 
         const disjuntoresPadrao = [10, 16, 20, 25, 32, 40, 50, 63, 70, 80, 100, 125, 160];
 
-        // Conversão técnica precisa de BTU para Watts elétricos (Proporção média de compressor / BTU)
         function btuParaWatts(btu) {
             return Math.round(btu / 11);
         }
@@ -369,12 +368,39 @@
 
                 const potTotalInstalada = (qChuveiros * pChuveiro) + (qAres * pArW) + wTugs;
 
+                // Fator de demanda residencial padrão
                 let fd = 0.60;
                 if (potTotalInstalada > 10000) fd = 0.55;
                 if (potTotalInstalada > 20000) fd = 0.45;
 
                 const potDemanda = potTotalInstalada * fd;
-                const ibGeral = (rede === 'trifasico') ? (potDemanda / (Math.sqrt(3) * tensao)) : (potDemanda / tensao);
+                
+                // Cálculo da corrente considerando o tipo de rede selecionado
+                let ibGeral = 0;
+                if (rede === 'trifasico') {
+                    ibGeral = potDemanda / (Math.sqrt(3) * tensao);
+                } else if (rede === 'bifasico') {
+                    ibGeral = potDemanda / (2 * 127); // Considerando distribuição equilibrada em 2 fases 127V ou 220V dependendo da linha
+                } else {
+                    ibGeral = potDemanda / tensao;
+                }
+
+                // Sugestão Inteligente de Ligação com base na Demanda (kW) e Corrente
+                let sugestaoRede = "Monofásico (Até ~12 kW / 40A - verifique a norma da concessionária local)";
+                let classeRecomendada = "monofasico";
+                
+                // Em regra geral de concessionárias (ex: Celesc/RGE): acima de 10-12kW ou correntes > 40A/50A exige-se bifásico ou trifásico
+                let potenciaKW = potDemanda / 1000;
+                if (potenciaKW > 10 && potenciaKW <= 25) {
+                    sugestaoRede = "Bifásico (Recomendado para cargas entre 10kW e 25kW)";
+                    classeRecomendada = "bifasico";
+                } else if (potenciaKW > 25 || qChuveiros >= 3) {
+                    sugestaoRede = "Trifásico (Recomendado para alta demanda > 25kW e múltiplos equipamentos pesados)";
+                    classeRecomendada = "trifasico";
+                } else if (potenciaKW <= 10) {
+                    sugestaoRede = "Monofásico ou Bifásico";
+                    classeRecomendada = "monofasico";
+                }
 
                 let djGeral = disjuntoresPadrao[0];
                 for (let d of disjuntoresPadrao) {
@@ -385,7 +411,6 @@
                 let caboGeral = tabelaCabosNBR.find(c => c[col] >= djGeral) || tabelaCabosNBR[tabelaCabosNBR.length - 1];
 
                 let listaCircuitos = [];
-                
                 for(let i=1; i<=qChuveiros; i++) {
                     listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Chuveiro ${i}`, pChuveiro, tensao, distancia, rede));
                 }
@@ -416,6 +441,10 @@
                     <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 18px; border-radius: 8px;">
                         <h3 style="color: #0b132b; margin-bottom: 12px;"><i class="fa-solid fa-house-bolt"></i> Dimensionamento de Entrada Residencial & Quadro</h3>
                         
+                        <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 6px; margin-bottom: 15px; color: #1e40af;">
+                            <strong><i class="fa-solid fa-lightbulb"></i> Sugestão de Tipo de Ligação:</strong> ${sugestaoRede}
+                        </div>
+
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; background: #ffffff; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
                             <div><strong>Potência Instalada:</strong> ${(potTotalInstalada/1000).toFixed(2)} kW</div>
                             <div><strong>Potência Calculada (Demanda):</strong> ${(potDemanda/1000).toFixed(2)} kW</div>
@@ -458,10 +487,6 @@
                 }
                 
                 let resCircuito = dimensionarCircuitoUnico("Equipamento / Circuito", potenciaInstalada, tensao, distancia, rede);
-
-                const iSemDisparo = (resCircuito.disjuntor * 1.13).toFixed(1);
-                const iComDisparo1h = (resCircuito.disjuntor * 1.45).toFixed(1);
-                const iCurto = (resCircuito.disjuntor * 5.0).toFixed(0);
 
                 resDiv.innerHTML = `
                     <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 18px; border-radius: 8px;">
