@@ -22,7 +22,7 @@ function adicionarNovaSugestaoDatalist() {
     const datalist = document.getElementById('sugestoesCircuitos');
 
     if (!valor) {
-        alert("Digite o nome do novo circuito ou equipamento para incluí-lo na lista.");
+        alert("Digite o nome do novo circuito ou equipamento.");
         return;
     }
 
@@ -38,9 +38,9 @@ function adicionarNovaSugestaoDatalist() {
         const novaOpcao = document.createElement('option');
         novaOpcao.value = valor;
         datalist.appendChild(novaOpcao);
-        alert(`"${valor}" foi adicionado com sucesso às opções de equipamentos!`);
+        alert(`"${valor}" adicionado às opções!`);
     } else {
-        alert(`"${valor}" já consta na lista de sugestões.`);
+        alert(`"${valor}" já consta na lista.`);
     }
 }
 
@@ -50,7 +50,7 @@ function adicionarCircuitoCustomizado() {
     const tensao = parseInt(document.getElementById('novoTensaoCircuito').value);
 
     if(!nome || isNaN(potencia) || potencia <= 0) {
-        alert("Por favor, preencha o nome e uma potência válida.");
+        alert("Preencha o nome e uma potência válida.");
         return;
     }
 
@@ -71,7 +71,7 @@ function atualizarListaCircuitosTela() {
     if(!ul) return;
     ul.innerHTML = "";
     if(circuitosCustomizados.length === 0) {
-        ul.innerHTML = "<li style='color:#94a3b8;'>Nenhum circuito adicionado ainda.</li>";
+        ul.innerHTML = "<li style='color:#94a3b8;'>Nenhum circuito adicionado.</li>";
         return;
     }
     circuitosCustomizados.forEach((c, idx) => {
@@ -99,10 +99,6 @@ const tabelaCabosNBR = [
 
 const disjuntoresPadrao = [10, 16, 20, 25, 32, 40, 50, 63, 70, 80, 100, 125, 160];
 
-function btuParaWatts(btu) {
-    return Math.round(btu / 11);
-}
-
 function dimensionarCircuitoUnico(nome, potenciaW, tensaoV, distanciaM, ehTrifasicoCarga = false) {
     let ib = ehTrifasicoCarga ? (potenciaW / (Math.sqrt(3) * tensaoV)) : (potenciaW / tensaoV);
     
@@ -122,8 +118,8 @@ function dimensionarCircuitoUnico(nome, potenciaW, tensaoV, distanciaM, ehTrifas
     const secaoMinQueda = (K * distanciaM * ib) / (56 * deltaV);
 
     let caboQueda = tabelaCabosNBR.find(c => c.secao >= secaoMinQueda) || tabelaCabosNBR[tabelaCabosNBR.length - 1];
-    
     let caboFinal = (caboQueda.secao > caboAmp.secao) ? caboQueda : caboAmp;
+    
     let minSecaoPermitida = (nome.toLowerCase().indexOf('iluminação') !== -1) ? 1.5 : 2.5;
     if (caboFinal.secao < minSecaoPermitida) {
         caboFinal = tabelaCabosNBR.find(c => c.secao >= minSecaoPermitida);
@@ -149,15 +145,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if(btnCalc) {
         btnCalc.addEventListener('click', function() {
             const tipo = document.getElementById('tipoUso').value;
-            let rede = document.getElementById('tipoRede').value;
-            const tensao = parseFloat(document.getElementById('tensaoVolts').value) || 220;
+            let redeSelecionada = document.getElementById('tipoRede').value;
+            const tensaoBase = parseFloat(document.getElementById('tensaoVolts').value) || 220;
             const distancia = parseFloat(document.getElementById('distanciaMetros').value) || 15;
             const resDiv = document.getElementById('resultadoAvancado');
             resDiv.style.display = 'block';
 
             if (tipo === 'casa') {
                 if(circuitosCustomizados.length === 0) {
-                    alert("Adicione pelo menos um circuito na lista.");
+                    alert("Adicione pelo menos um circuito.");
                     resDiv.style.display = 'none';
                     return;
                 }
@@ -172,28 +168,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const potDemanda = potTotalInstalada * fd;
 
-                let sugestaoRede = "Bifásico";
-                let redeCalculada = rede; 
+                // Verificação estrita de consistência de rede
+                let redeIdeal = "bifasico";
+                let textoRedeIdeal = "Bifásico (2F + N)";
+                if (potenciaKWInstalada > 25 || potDemanda > 15000) {
+                    redeIdeal = "trifasico";
+                    textoRedeIdeal = "Trifásico (3F + N)";
+                } else if (potenciaKWInstalada <= 5) {
+                    redeIdeal = "monofasico";
+                    textoRedeIdeal = "Monofásico (1F + N)";
+                }
 
-                if (potenciaKWInstalada <= 25) {
-                    sugestaoRede = "Bifásico (Atende perfeitamente à demanda calculada e à carga instalada)";
-                    redeCalculada = "bifasico";
-                } else {
-                    sugestaoRede = "Trifásico (Indicado para carga instalada acima de 25 kW)";
-                    redeCalculada = "trifasico";
+                let alertaInconsistencia = "";
+                if (redeSelecionada === 'monofasico' && potenciaKWInstalada > 6) {
+                    alertaInconsistencia = `
+                        <div style="background: #fef3c7; border: 1px solid #f59e0b; padding: 12px; border-radius: 6px; margin-bottom: 15px; color: #92400e;">
+                            <strong>⚠️ ALERTA DE INCONSISTÊNCIA DE REDE:</strong> Você selecionou o tipo de rede <em>Monofásico</em>, mas a potência instalada (${potenciaKWInstalada.toFixed(1)} kW) excede o limite seguro para monofásico. O ideal técnico é alterar o campo <strong>Tipo de Rede Atual</strong> para <strong>${textoRedeIdeal}</strong>.
+                        </div>
+                    `;
                 }
 
                 let ibInstalado = 0;
                 let tipoDisjuntorTexto = "";
 
-                if (redeCalculada === 'trifasico') {
-                    ibInstalado = potDemanda / (Math.sqrt(3) * 220);
+                if (redeSelecionada === 'trifasico') {
+                    ibInstalado = potDemanda / (Math.sqrt(3) * tensaoBase);
                     tipoDisjuntorTexto = "Trifásico (Tripolar)";
-                } else if (redeCalculada === 'bifasico') {
-                    ibInstalado = potDemanda / 220; 
+                } else if (redeSelecionada === 'bifasico') {
+                    ibInstalado = potDemanda / tensaoBase;
                     tipoDisjuntorTexto = "Bifásico (Bipolar)";
                 } else {
-                    ibInstalado = potDemanda / tensao;
+                    ibInstalado = potDemanda / tensaoBase;
                     tipoDisjuntorTexto = "Monofásico (Unipolar)";
                 }
 
@@ -202,15 +207,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (d >= ibInstalado) { djGeral = d; break; }
                 }
 
-                const col = (redeCalculada === 'trifasico') ? 'amp3' : 'amp2';
+                const col = (redeSelecionada === 'trifasico') ? 'amp3' : 'amp2';
                 let caboGeral = tabelaCabosNBR.find(c => c[col] >= djGeral) || tabelaCabosNBR[tabelaCabosNBR.length - 1];
 
                 let listaCircuitos = [];
                 circuitosCustomizados.forEach(c => {
                     listaCircuitos.push(dimensionarCircuitoUnico(c.nome, c.potencia, c.tensao, distancia, false));
                 });
-
-                const totalDisjuntores = listaCircuitos.length + 1;
 
                 let htmlCircuitos = "";
                 listaCircuitos.forEach((c, idx) => {
@@ -230,21 +233,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 18px; border-radius: 8px;">
                         <h3 style="color: #0b132b; margin-bottom: 12px;"><i class="fa-solid fa-house-bolt"></i> Dimensionamento de Entrada Residencial & Quadro</h3>
                         
+                        ${alertaInconsistencia}
+
                         <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 6px; margin-bottom: 15px; color: #1e40af;">
-                            <strong><i class="fa-solid fa-lightbulb"></i> Sugestão de Tipo de Ligação:</strong> ${sugestaoRede}
+                            <strong><i class="fa-solid fa-lightbulb"></i> Tipo de Rede Recomendado pela NBR:</strong> ${textoRedeIdeal} (Calculado com base na carga total).
                         </div>
 
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; background: #ffffff; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
                             <div><strong>Potência Instalada:</strong> ${(potTotalInstalada/1000).toFixed(2)} kW</div>
                             <div><strong>Potência Calculada (Demanda):</strong> ${(potDemanda/1000).toFixed(2)} kW</div>
                             <div><strong>Fator de Demanda:</strong> ${(fd*100).toFixed(0)}%</div>
-                            <div><strong>Corrente por Fase (Demanda):</strong> <span style="color:#d97706; font-weight:bold;">${ibInstalado.toFixed(1)} A</span></div>
-                            <div><strong>Disjuntor Geral (QDF):</strong> <span style="color:#2563eb; font-weight:bold;">Disjuntor ${tipoDisjuntorTexto} de ${djGeral} A</span></div>
-                            <div><strong>Cabo de Entrada (Alimentador):</strong> <span style="color:#166534; font-weight:bold;">${caboGeral.secao} mm²</span></div>
+                            <div><strong>Corrente por Fase:</strong> <span style="color:#d97706; font-weight:bold;">${ibInstalado.toFixed(1)} A</span></div>
+                            <div><strong>Disjuntor Geral:</strong> <span style="color:#2563eb; font-weight:bold;">${tipoDisjuntorTexto} de ${djGeral} A</span></div>
+                            <div><strong>Cabo Alimentador:</strong> <span style="color:#166534; font-weight:bold;">${caboGeral.secao} mm²</span></div>
                         </div>
 
                         <h4 style="color: #1e293b; margin-top: 15px; margin-bottom: 10px;">
-                            <i class="fa-solid fa-list-check"></i> Detalhamento do Quadro de Distribuição (Total: ${totalDisjuntores} Disjuntores)
+                            <i class="fa-solid fa-list-check"></i> Circuitos do Quadro (Total: ${listaCircuitos.length + 1} Disjuntores)
                         </h4>
                         
                         <div style="overflow-x: auto;">
@@ -253,10 +258,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <tr>
                                         <th style="padding: 8px;">Circuito</th>
                                         <th style="padding: 8px;">Potência</th>
-                                        <th style="padding: 8px;">Corrente (Ib)</th>
+                                        <th style="padding: 8px;">Corrente</th>
                                         <th style="padding: 8px;">Disjuntor</th>
-                                        <th style="padding: 8px;">Cabo Rec.</th>
-                                        <th style="padding: 8px;">Queda (ΔV)</th>
+                                        <th style="padding: 8px;">Cabo</th>
+                                        <th style="padding: 8px;">ΔV</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -267,26 +272,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             } else {
-                let potenciaInstalada = 0;
-                if (tipo === 'ar') {
-                    let btu = parseFloat(document.getElementById('inputBtus').value) || 0;
-                    potenciaInstalada = btuParaWatts(btu);
-                } else {
-                    potenciaInstalada = parseFloat(document.getElementById('potenciaWatts').value) || 0;
-                }
-                
-                let ehTrifasico = (rede === 'trifasico');
-                let resCircuito = dimensionarCircuitoUnico("Equipamento / Circuito", potenciaInstalada, tensao, distancia, ehTrifasico);
-                let tipoDjUnico = ehTrifasico ? 'Trifásico (Tripolar)' : (rede === 'bifasico' ? 'Bifásico (Bipolar)' : 'Monofásico (Unipolar)');
+                let potenciaInstalada = (tipo === 'ar') ? (parseFloat(document.getElementById('inputBtus').value || 0) / 11) : (parseFloat(document.getElementById('potenciaWatts').value) || 0);
+                let ehTrifasico = (redeSelecionada === 'trifasico');
+                let resCircuito = dimensionarCircuitoUnico("Equipamento", potenciaInstalada, tensaoBase, distancia, ehTrifasico);
+                let tipoDjUnico = ehTrifasico ? 'Trifásico (Tripolar)' : (redeSelecionada === 'bifasico' ? 'Bifásico (Bipolar)' : 'Monofásico (Unipolar)');
 
                 resDiv.innerHTML = `
                     <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 18px; border-radius: 8px;">
-                        <h3 style="color: #0b132b; margin-bottom: 10px;"><i class="fa-solid fa-file-contract"></i> Relatório de Circuito Único</h3>
+                        <h3 style="color: #0b132b; margin-bottom: 10px;"><i class="fa-solid fa-file-contract"></i> Relatório de Circuito Único (${tensaoBase}V)</h3>
                         • <strong>Corrente Nominal (Ib):</strong> <span style="color:#d97706; font-weight:bold;">${resCircuito.ib.toFixed(1)} A</span><br>
-                        • <strong>Disjuntor Sugerido (In):</strong> <span style="color:#2563eb; font-weight:bold;">Disjuntor ${tipoDjUnico} de ${resCircuito.disjuntor} A</span> (Curva C)<br>
-                        • <strong>Cabo Recomendado:</strong> <span style="color:#166534; font-weight:bold;">${resCircuito.caboSecao} mm²</span> (Distância: ${distancia}m)<br>
-                        • <strong>Ampacidade do Cabo (Iz):</strong> Suporta até ${resCircuito.ampacidadeIz} A em eletroduto<br>
-                        • <strong>Queda de Tensão (ΔV):</strong> ${resCircuito.quedaPct.toFixed(2)}% ${resCircuito.quedaPct > 4 ? '<span style="color:red;">⚠️ Excede 4%! Bitola aumentada.</span>' : '<span style="color:green;">✓ Dentro do limite NBR 5410 (&le;4%)</span>'}<br>
+                        • <strong>Disjuntor Sugerido:</strong> <span style="color:#2563eb; font-weight:bold;">${tipoDjUnico} de ${resCircuito.disjuntor} A</span> (Curva C)<br>
+                        • <strong>Cabo Recomendado:</strong> <span style="color:#166534; font-weight:bold;">${resCircuito.caboSecao} mm²</span><br>
+                        • <strong>Ampacidade (Iz):</strong> Suporta até ${resCircuito.ampacidadeIz} A<br>
+                        • <strong>Queda de Tensão:</strong> ${resCircuito.quedaPct.toFixed(2)}% ${resCircuito.quedaPct > 4 ? '<span style="color:red;">⚠️ Excede 4%!</span>' : '<span style="color:green;">✓ Ok</span>'}<br>
                     </div>
                 `;
             }
