@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clademir Bertol - Painel Elétrico</title>
+    <title>Clademir Bertol - Painel Elétrico & Automação</title>
     <link rel="manifest" href="./manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./style.css">
@@ -16,7 +16,7 @@
             <img src="./logo-pai.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
             <div class="nav-titles">
                 <h1>Clademir Bertol</h1>
-                <p>Gestão & Engenharia Elétrica</p>
+                <p>Engenharia, Elétrica & Automação</p>
             </div>
         </div>
         <div class="nav-badge">
@@ -26,51 +26,58 @@
 
     <div class="container">
 
-        <!-- TELA PRINCIPAL: PAINEL DE CARDS (Estilo TBX) -->
+        <!-- TELA PRINCIPAL: PAINEL DE CARDS -->
         <section id="painelMenu" class="dashboard-grid">
             
-            <!-- Card 1: Calculadora Inteligente -->
+            <!-- Card 1: Calculadora de Cargas & Ar Condicionado -->
             <div class="card-modulo" onclick="abrirFerramenta('calcFerramenta')">
                 <div class="card-icon icon-calc"><i class="fa-solid fa-calculator"></i></div>
-                <h3>Calculadora de Cargas & Cabos</h3>
-                <p>Dimensionamento por tipo de equipamento (Resistência, Motor, Tomada, Chuveiro, Ar) com cálculo de queda e distância.</p>
+                <h3>Calculadora & Ar Condicionado</h3>
+                <p>Dimensionamento de cabos por carga (Resistência, Motor, Tomadas) e conversão inteligente de BTUs para Watts.</p>
             </div>
 
-            <!-- Card 2: Guia Técnico & Exemplos de Ligações -->
+            <!-- Card 2: Automação & Componentes -->
+            <div class="card-modulo" onclick="abrirFerramenta('automacaoFerramenta')">
+                <div class="card-icon icon-auto"><i class="fa-solid fa-microchip"></i></div>
+                <h3>Automação, Relés & Contatores</h3>
+                <p>Explicação prática sobre contatores, relés, acionamentos e diferenças entre tipos de disjuntores.</p>
+            </div>
+
+            <!-- Card 3: Guia de Ligações -->
             <div class="card-modulo" onclick="abrirFerramenta('guiaFerramenta')">
                 <div class="card-icon icon-guia"><i class="fa-solid fa-diagram-project"></i></div>
-                <h3>Guia & Esquemas de Ligações</h3>
-                <p>Exemplos práticos e diagramas visuais para redes Monofásicas, Bifásicas, Trifásicas e Partidas de Motores.</p>
+                <h3>Esquemas de Ligações Práticas</h3>
+                <p>Diagramas visuais passo a passo para redes monofásicas, bifásicas, trifásicas e comandos.</p>
             </div>
 
-            <!-- Card 3: Orçamentos -->
+            <!-- Card 4: Orçamentos Completos -->
             <div class="card-modulo" onclick="abrirFerramenta('orcFerramenta')">
                 <div class="card-icon icon-orc"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-                <h3>Novo Orçamento / Planilha</h3>
-                <p>Registro rápido de clientes, descrição de serviços e salvamento automático integrado ao Google Sheets.</p>
+                <h3>Novo Orçamento & Planilha</h3>
+                <p>Emissão com dados cadastrais (CPF/CNPJ, Endereço), categorias (Elétrica, Serviços Gerais, Pintura) e envio automático.</p>
             </div>
 
         </section>
 
-        <!-- ================= FERRAMENTA 1: CALCULADORA INTELIGENTE ================= -->
+
+        <!-- ================= FERRAMENTA 1: CALCULADORA & AR CONDICIONADO ================= -->
         <div id="calcFerramenta" class="ferramenta-container">
             <div class="ferramenta-header">
-                <h2><i class="fa-solid fa-calculator"></i> Dimensionamento Avançado por Carga</h2>
+                <h2><i class="fa-solid fa-calculator"></i> Dimensionamento & Conversor BTU/Watts</h2>
                 <button class="btn-fechar" onclick="fecharFerramentas()"><i class="fa-solid fa-xmark"></i> Fechar</button>
             </div>
             
             <div class="form-grid">
                 <div class="form-group">
-                    <label>Tipo de Equipamento / Uso:</label>
-                    <select id="tipoUso">
-                        <option value="resistencia">Resistência / Chuveiro / Aquecedor</option>
-                        <option value="motor">Motor Elétrico / Bomba</option>
-                        <option value="tomada">Tomada de Uso Geral (TUG)</option>
-                        <option value="iluminacao">Iluminação</option>
-                        <option value="ar">Ar Condicionado (Inverter / Convencional)</option>
+                    <label>Tipo de Equipamento / Carga:</label>
+                    <select id="tipoUso" onchange="alternarCamposCalculadora()">
+                        <option value="geral">Carga Geral (Resistência, Tomada, Motor)</option>
+                        <option value="ar">Ar Condicionado (Converter BTUs para Watts)</option>
                     </select>
                 </div>
-                <div class="form-group">
+                
+                <!-- Campos para Carga Geral -->
+                <div class="form-group campo-geral">
                     <label>Tipo de Rede:</label>
                     <select id="tipoRede">
                         <option value="monofasico">Monofásico (1F + N)</option>
@@ -78,7 +85,7 @@
                         <option value="trifasico">Trifásico (3F + T)</option>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group campo-geral">
                     <label>Tensão (Volts):</label>
                     <select id="tensaoVolts">
                         <option value="127">127V</option>
@@ -86,154 +93,276 @@
                         <option value="380">380V</option>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group campo-geral">
                     <label>Potência Total (Watts):</label>
                     <input type="number" id="potenciaWatts" placeholder="Ex: 5500" value="5500">
                 </div>
+
+                <!-- Campos específicos para Ar Condicionado -->
+                <div class="form-group campo-ar" style="display:none;">
+                    <label>Capacidade em BTUs:</label>
+                    <input type="number" id="inputBtus" placeholder="Ex: 12000" value="12000">
+                </div>
+
                 <div class="form-group">
                     <label>Distância do Quadro (Metros):</label>
-                    <input type="number" id="distanciaMetros" placeholder="Ex: 15" value="10">
+                    <input type="number" id="distanciaMetros" placeholder="Ex: 10" value="10">
                 </div>
             </div>
-            <button class="btn-acao" id="btnCalcularAvancado">Calcular Dimensionamento Completo</button>
+            <button class="btn-acao" id="btnCalcularAvancado">Calcular Parâmetros</button>
             
             <div id="resultadoAvancado" class="resultado-box" style="display:none;"></div>
         </div>
 
-        <!-- ================= FERRAMENTA 2: GUIA E ESQUEMAS VISUAIS ================= -->
-        <div id="guiaFerramenta" class="ferramenta-container">
+
+        <!-- ================= FERRAMENTA 2: AUTOMAÇÃO, RELÉS & DISJUNTORES ================= -->
+        <div id="automacaoFerramenta" class="ferramenta-container">
             <div class="ferramenta-header">
-                <h2><i class="fa-solid fa-diagram-project"></i> Exemplos e Esquemas de Ligações</h2>
+                <h2><i class="fa-solid fa-microchip"></i> Automação: Relés, Contatores e Disjuntores</h2>
                 <button class="btn-fechar" onclick="fecharFerramentas()"><i class="fa-solid fa-xmark"></i> Fechar</button>
             </div>
 
-            <p style="margin-bottom: 20px; color: var(--text-muted);">Consulte abaixo os diagramas estruturais e exemplos práticos para execução em campo:</p>
+            <div class="bloco-tecnico">
+                <h4><i class="fa-solid fa-toggle-on" style="color:var(--accent);"></i> Contatores vs. Relés: Qual a diferença?</h4>
+                <p><strong>Contator:</strong> É um dispositivo eletromecânico de alta potência projetado para manobrar correntes elevadas (como motores, bancos de capacitores e grandes aquecedores). Suporta milhares de ciclos de carga pesada.</p>
+                <p style="margin-top: 8px;"><strong>Relé:</strong> Geralmente utilizado para controle de sinais e correntes mais baixas (como automação residencial, comandos lógicos ou acionamentos auxiliares). Atua como um interruptor acionado eletronicamente ou por bobina de baixa potência.</p>
+            </div>
 
-            <!-- Exemplo 1: Monofásico -->
-            <div class="esquema-card">
-                <h4>1. Instalação Monofásica (1 Fase + Neutro + Terra)</h4>
-                <p>Ideal para residências de pequeno porte, cargas até 220V/127V focadas em iluminação e TUGs.</p>
+            <div class="bloco-tecnico">
+                <h4><i class="fa-solid fa-shield-halved" style="color:var(--accent);"></i> Diferença entre Disjuntores (Curvas C, B e D)</h4>
+                <ul style="margin-left: 20px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
+                    <li><strong>Curva B:</strong> Dispara entre 3 a 5 vezes a corrente nominal. Ideal para proteção de geradores e cabos longos com baixa corrente de partida.</li>
+                    <li><strong>Curva C:</strong> Dispara entre 5 a 10 vezes a corrente nominal. O padrão mais utilizado em residências e comércios para tomadas, iluminação e cargas indutivas moderadas.</li>
+                    <li><strong>Curva D:</strong> Dispara entre 10 a 20 vezes a corrente nominal. Indicado para cargas com altíssima corrente de partida, como grandes motores industriais, transformadores e máquinas de solda.</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <!-- ================= FERRAMENTA 3: GUIA DE LIGAÇÕES VISUAIS ================= -->
+        <div id="guiaFerramenta" class="ferramenta-container">
+            <div class="ferramenta-header">
+                <h2><i class="fa-solid fa-diagram-project"></i> Esquemas de Ligações Práticas</h2>
+                <button class="btn-fechar" onclick="fecharFerramentas()"><i class="fa-solid fa-xmark"></i> Fechar</button>
+            </div>
+
+            <div class="bloco-tecnico">
+                <h4>1. Ligação Monofásica (1 Fase + Neutro + Terra)</h4>
                 <div class="esquema-visual">
-[Fase (Preto/Vermelho)] ------> Disjuntor ----------------> Carga
+[Fase (Preto/Vermelho)] ------> Disjuntor ----------------> Carga (127V)
 [Neutro (Azul Claro)]     -----------------------------> Carga
-[Proteção (Verde/Amarelo)] ----------------------------> Carcaça (Terra)
+[Proteção (Verde/Amarelo)] ----------------------------> Terra
                 </div>
             </div>
 
-            <!-- Exemplo 2: Bifásico -->
-            <div class="esquema-card">
-                <h4>2. Instalação Bifásica (2 Fases + Neutro + Terra)</h4>
-                <p>Utilizada para chuveiros, torneiras elétricas e equipamentos de maior consumo em 220V.</p>
+            <div class="bloco-tecnico">
+                <h4>2. Ligação Bifásica (2 Fases + Neutro + Terra)</h4>
                 <div class="esquema-visual">
 [Fase A] \
           >--- Disjuntor Bipolar ----------------------> Carga (220V)
 [Fase B] /
-[Neutro]  -------------------------------------------> Retorno / Neutro
+[Neutro]  -------------------------------------------> Retorno
 [Terra]   -------------------------------------------> Proteção
                 </div>
             </div>
 
-            <!-- Exemplo 3: Trifásico -->
-            <div class="esquema-card">
-                <h4>3. Instalação Trifásica (3 Fases + Neutro + Terra)</h4>
-                <p>Aplicada em motores industriais, quadros de distribuição gerais (QGBT) e cargas equilibradas.</p>
+            <div class="bloco-tecnico">
+                <h4>3. Comando Básico com Contator (Ex: Acionamento de Motor/Carga Pesada)</h4>
                 <div class="esquema-visual">
-[Fase 1] \
-[Fase 2]  >--- Disjuntor Tripolar -------------------> Motores / Painel
-[Fase 3] /
-[Terra]   -----------------------------------------> Proteção Geral
+[Comando (Botão Ligar)] ---> Bobina do Contator (A1 / A2)
+[Fase Principal] -------> Contatos Principais (1/L1, 3/L2) ---> Carga Pesada
                 </div>
             </div>
         </div>
 
-        <!-- ================= FERRAMENTA 3: ORÇAMENTOS ================= -->
+
+        <!-- ================= FERRAMENTA 4: ORÇAMENTOS COMPLETOS ================= -->
         <div id="orcFerramenta" class="ferramenta-container">
             <div class="ferramenta-header">
-                <h2><i class="fa-solid fa-file-invoice-dollar"></i> Registro de Orçamento</h2>
+                <h2><i class="fa-solid fa-file-invoice-dollar"></i> Emitir Novo Orçamento</h2>
                 <button class="btn-fechar" onclick="fecharFerramentas()"><i class="fa-solid fa-xmark"></i> Fechar</button>
             </div>
             
             <form id="formOrcamento">
-                <div class="form-group">
-                    <label>Nome do Cliente:</label>
-                    <input type="text" id="clienteNome" required placeholder="Nome do cliente ou empresa">
+                <!-- Dados do Cliente -->
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nome do Cliente / Empresa:</label>
+                        <input type="text" id="clienteNome" required placeholder="Nome completo">
+                    </div>
+                    <div class="form-group">
+                        <label>CPF ou CNPJ:</label>
+                        <input type="text" id="clienteDoc" placeholder="000.000.000-00 / 00.000...">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone / WhatsApp:</label>
+                        <input type="text" id="clienteTel" placeholder="(47) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label>Endereço do Local:</label>
+                        <input type="text" id="clienteEnd" placeholder="Rua, Bairro, Cidade">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Descrição do Serviço:</label>
-                    <textarea id="servicoDesc" rows="3" required placeholder="Detalhes da execução..."></textarea>
+
+                <hr style="border:0; border-top:1px solid #e2e8f0; margin: 15px 0 20px 0;">
+
+                <!-- Categoria e Tipo de Serviço -->
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Tipo de Serviço Principal:</label>
+                        <select id="servicoPrincipal" onchange="atualizarOpcoesServico()">
+                            <option value="eletrica">Elétrica</option>
+                            <option value="gerais">Serviços Gerais</option>
+                            <option value="pintura">Pintura</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Especificação do Serviço:</label>
+                        <select id="servicoEspecifico">
+                            <!-- Preenchido dinamicamente via JS -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quantidade (Unidades / m²):</label>
+                        <input type="number" step="0.1" id="servicoQtd" value="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Valor Total (R$):</label>
+                        <input type="number" step="0.01" id="valorTotal" required placeholder="0.00">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Observações / Descrição Detalhada:</label>
+                        <textarea id="servicoDesc" rows="2" placeholder="Detalhes adicionais da execução..."></textarea>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Valor Total (R$):</label>
-                    <input type="number" step="0.01" id="valorTotal" required placeholder="0.00">
-                </div>
-                <button type="submit" class="btn-acao" id="btnSalvar">Salvar na Planilha</button>
+
+                <button type="submit" class="btn-acao" id="btnSalvar">Salvar Orçamento na Planilha</button>
             </form>
             <div id="statusEnvio" class="resultado-box" style="display:none;"></div>
         </div>
 
     </div>
 
-    <!-- Scripts de Controle e Lógica -->
+    <!-- Scripts de Lógica do Painel -->
     <script>
-        // Funções para abrir e fechar os cartões no estilo painel
         function abrirFerramenta(idFerramenta) {
-            // Esconde o menu de cards principal
             document.getElementById('painelMenu').style.display = 'none';
-            
-            // Oculta todas as ferramentas abertas
-            const ferramentas = document.querySelectorAll('.ferramenta-container');
-            ferramentas.forEach(f => f.style.display = 'none');
-            
-            // Mostra a ferramenta selecionada
+            document.querySelectorAll('.ferramenta-container').forEach(f => f.style.display = 'none');
             document.getElementById(idFerramenta).style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function fecharFerramentas() {
-            // Oculta todas as ferramentas
-            const ferramentas = document.querySelectorAll('.ferramenta-container');
-            ferramentas.forEach(f => f.style.display = 'none');
-            
-            // Mostra novamente o menu de cards principal
+            document.querySelectorAll('.ferramenta-container').forEach(f => f.style.display = 'none');
             document.getElementById('painelMenu').style.display = 'grid';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Lógica simples de cálculo avançado para preencher o resultado
-        document.getElementById('btnCalcularAvancado').addEventListener('click', function() {
-            const potencia = parseFloat(document.getElementById('potenciaWatts').value) || 0;
-            const tensao = parseFloat(document.getElementById('tensaoVolts').value) || 220;
-            const uso = document.getElementById('tipoUso').value;
-            const distancia = parseFloat(document.getElementById('distanciaMetros').value) || 0;
+        function alternarCamposCalculadora() {
+            const tipo = document.getElementById('tipoUso').value;
+            const camposGeral = document.querySelectorAll('.campo-geral');
+            const camposAr = document.querySelectorAll('.campo-ar');
+            
+            if(tipo === 'ar') {
+                camposGeral.forEach(c => c.style.display = 'none');
+                camposAr.forEach(c => c.style.display = 'block');
+            } else {
+                camposGeral.forEach(c => c.style.display = 'block');
+                camposAr.forEach(c => c.style.display = 'none');
+            }
+        }
 
-            // Cálculo básico da corrente (I = P / V para monofásico/resistivo)
-            let corrente = potencia / tensao;
-            if(uso === 'motor') corrente = corrente * 1.25; // Margem de partida para motores
+        // Atualizar lista de serviços no orçamento com base na categoria
+        function atualizarOpcoesServico() {
+            const principal = document.getElementById('servicoPrincipal').value;
+            const especifica = document.getElementById('servicoEspecifico');
+            especifica.innerHTML = '';
 
-            // Estimativa de disjuntor padrão comercial
-            let disjuntor = 10;
-            const padroes = [10, 16, 20, 25, 32, 40, 50, 63, 70, 80, 100];
-            for(let p of padroes) {
-                if(corrente <= p) { disjuntor = p; break; }
-                disjuntor = 100;
+            let opcoes = [];
+            if(principal === 'eletrica') {
+                opcoes = [
+                    "Instalação de Chuveiro",
+                    "Instalação de Tomadas / Fotocélulas",
+                    "Interruptores (Ponto)",
+                    "Instalação de Quadro de Distribuição",
+                    "Geral (Instalação Nova Completa)"
+                ];
+            } else if(principal === 'gerais') {
+                opcoes = [
+                    "Manutenção Preventiva Geral",
+                    "Fixações e Ajustes Estruturais",
+                    "Montagem de Equipamentos"
+                ];
+            } else if(principal === 'pintura') {
+                opcoes = [
+                    "Pintura de Paredes (m²)",
+                    "Pintura de Estruturas / Grades (m² / Un)",
+                    "Acabamento e Retoques (Un)"
+                ];
             }
 
-            // Estimativa de cabo com base na corrente
-            let cabo = "2.5 mm²";
-            if(corrente > 21 && corrente <= 28) cabo = "4.0 mm²";
-            else if(corrente > 28 && corrente <= 36) cabo = "6.0 mm²";
-            else if(corrente > 36 && corrente <= 50) cabo = "10.0 mm²";
-            else if(corrente > 50) cabo = "16.0 mm² ou superior";
+            opcoes.forEach(opt => {
+                let el = document.createElement('option');
+                el.value = opt;
+                el.textContent = opt;
+                especifica.appendChild(el);
+            });
+        }
 
+        // Executar na carga inicial para preencher as opções de serviço
+        window.onload = function() {
+            atualizarOpcoesServico();
+        };
+
+        // Lógica de cálculo avançado com conversão de BTUs
+        document.getElementById('btnCalcularAvancado').addEventListener('click', function() {
+            const tipo = document.getElementById('tipoUso').value;
+            const distancia = parseFloat(document.getElementById('distanciaMetros').value) || 0;
             const resDiv = document.getElementById('resultadoAvancado');
             resDiv.style.display = 'block';
-            resDiv.innerHTML = `
-                <strong>📊 Relatório de Dimensionamento (${uso.toUpperCase()})</strong><br><br>
-                • <strong>Corrente Calculada:</strong> ${corrente.toFixed(1)} A<br>
-                • <strong>Disjuntor Recomendado:</strong> ${disjuntor} A<br>
-                • <strong>Seção Mínima do Cabo:</strong> ${cabo} (para ${distancia} metros de distância)<br>
-                <em style="font-size:0.85rem; color:#64748b; display:block; margin-top:8px;">* Parâmetros calculados conforme critérios técnicos de queda de tensão e capacidade de condução.</em>
-            `;
+
+            if(tipo === 'ar') {
+                const btus = parseFloat(document.getElementById('inputBtus').value) || 0;
+                // Conversão padrão aproximada: 1 BTU/h ≈ 0.293 Watts térmicos (ou consumo elétrico médio estimado por eficiência)
+                // Para dimensionamento elétrico, um ar de 12000 BTUs consome em média 1100W a 1200W elétricos. Regra prática: BTUs / 10 aprox em watts elétricos para inverter modernos.
+                const wattsEletricos = btus / 10; 
+                const corrente = wattsEletricos / 220;
+                
+                resDiv.innerHTML = `
+                    <strong>❄️ Relatório de Ar Condicionado (${btus} BTUs)</strong><br><br>
+                    • <strong>Potência Elétrica Estimada:</strong> ~${wattsEletricos.toFixed(0)} Watts (220V)<br>
+                    • <strong>Corrente de Operação:</strong> ${corrente.toFixed(1)} A<br>
+                    • <strong>Disjuntor Recomendado:</strong> 10A ou 16A<br>
+                    • <strong>Cabo Recomendado:</strong> 2.5 mm² (para ${distancia}m)<br>
+                `;
+            } else {
+                const potencia = parseFloat(document.getElementById('potenciaWatts').value) || 0;
+                const tensao = parseFloat(document.getElementById('tensaoVolts').value) || 220;
+                
+                let corrente = potencia / tensao;
+                let disjuntor = 10;
+                const padroes = [10, 16, 20, 25, 32, 40, 50, 63, 80, 100];
+                for(let p of padroes) {
+                    if(corrente <= p) { disjuntor = p; break; }
+                    disjuntor = 100;
+                }
+
+                let cabo = "2.5 mm²";
+                if(corrente > 21 && corrente <= 28) cabo = "4.0 mm²";
+                else if(corrente > 28 && corrente <= 36) cabo = "6.0 mm²";
+                else if(corrente > 36) cabo = "10.0 mm² ou superior";
+
+                resDiv.innerHTML = `
+                    <strong>📊 Relatório de Dimensionamento Elétrico</strong><br><br>
+                    • <strong>Corrente Calculada:</strong> ${corrente.toFixed(1)} A<br>
+                    • <strong>Disjuntor Sugerido:</strong> ${disjuntor} A<br>
+                    • <strong>Cabo Recomendado:</strong> ${cabo} (Distância: ${distancia}m)<br>
+                `;
+            }
         });
     </script>
     <script type="module" src="./js/main.js"></script>
