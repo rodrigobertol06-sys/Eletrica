@@ -1,3 +1,4 @@
+Aqui está o código completo do projeto atualizado com a correção do cálculo da corrente bifásica baseada na potência de demanda dividida corretamente pelas fases, permitindo que cargas até 25 kW sejam atendidas de forma otimizada pelo sistema bifásico:
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -386,7 +387,6 @@
             let caboQueda = tabelaCabosNBR.find(c => c.secao >= secaoMinQueda) || tabelaCabosNBR[tabelaCabosNBR.length - 1];
             
             let caboFinal = (caboQueda.secao > caboAmp.secao) ? caboQueda : caboAmp;
-            // NBR 5410: Seção mínima para circuitos de força/tomadas e iluminação é 1.5mm² para luz e 2.5mm² para força/tomadas
             let minSecaoPermitida = (nome.toLowerCase().indexOf('iluminação') !== -1) ? 1.5 : 2.5;
             if (caboFinal.secao < minSecaoPermitida) {
                 caboFinal = tabelaCabosNBR.find(c => c.secao >= minSecaoPermitida);
@@ -426,39 +426,38 @@
                 circuitosCustomizados.forEach(c => potTotalInstalada += c.potencia);
                 const potenciaKWInstalada = potTotalInstalada / 1000;
 
-                let sugestaoRede = "Monofásico";
+                let fd = 0.60;
+                if (potTotalInstalada > 10000) fd = 0.55;
+                if (potTotalInstalada > 20000) fd = 0.45;
+
+                const potDemanda = potTotalInstalada * fd;
+
+                // Nova regra: Bifásico atende confortavelmente até 25 kW de carga instalada
+                let sugestaoRede = "Bifásico";
                 let redeCalculada = rede; 
 
-                if (potenciaKWInstalada > 8 && potenciaKWInstalada <= 20) {
-                    sugestaoRede = "Bifásico (Recomendado para cargas entre 8kW e 20kW)";
+                if (potenciaKWInstalada <= 25) {
+                    sugestaoRede = "Bifásico (Atende perfeitamente à demanda calculada e à carga instalada)";
                     redeCalculada = "bifasico";
-                } else if (potenciaKWInstalada > 20 || circuitosCustomizados.length >= 5) {
-                    sugestaoRede = "Trifásico (Indispensável para carga instalada > 20kW ou muitos circuitos)";
-                    redeCalculada = "trifasico";
                 } else {
-                    sugestaoRede = "Monofásico ou Bifásico";
-                    redeCalculada = "monofasico";
+                    sugestaoRede = "Trifásico (Indicado para carga instalada acima de 25 kW)";
+                    redeCalculada = "trifasico";
                 }
 
                 let ibInstalado = 0;
                 let tipoDisjuntorTexto = "";
 
                 if (redeCalculada === 'trifasico') {
-                    ibInstalado = potTotalInstalada / (Math.sqrt(3) * tensao);
+                    ibInstalado = potDemanda / (Math.sqrt(3) * 220);
                     tipoDisjuntorTexto = "Trifásico (Tripolar)";
                 } else if (redeCalculada === 'bifasico') {
-                    ibInstalado = potTotalInstalada / (2 * 127);
+                    // Corrente por fase calculada dividindo a demanda corretamente pelas duas fases (220V)
+                    ibInstalado = potDemanda / 220; 
                     tipoDisjuntorTexto = "Bifásico (Bipolar)";
                 } else {
-                    ibInstalado = potTotalInstalada / tensao;
+                    ibInstalado = potDemanda / tensao;
                     tipoDisjuntorTexto = "Monofásico (Unipolar)";
                 }
-
-                let fd = 0.60;
-                if (potTotalInstalada > 10000) fd = 0.55;
-                if (potTotalInstalada > 20000) fd = 0.45;
-
-                const potDemanda = potTotalInstalada * fd;
 
                 let djGeral = disjuntoresPadrao[0];
                 for (let d of disjuntoresPadrao) {
@@ -501,7 +500,7 @@
                             <div><strong>Potência Instalada:</strong> ${(potTotalInstalada/1000).toFixed(2)} kW</div>
                             <div><strong>Potência Calculada (Demanda):</strong> ${(potDemanda/1000).toFixed(2)} kW</div>
                             <div><strong>Fator de Demanda:</strong> ${(fd*100).toFixed(0)}%</div>
-                            <div><strong>Corrente Nominal Bruta:</strong> <span style="color:#d97706; font-weight:bold;">${ibInstalado.toFixed(1)} A</span></div>
+                            <div><strong>Corrente por Fase (Demanda):</strong> <span style="color:#d97706; font-weight:bold;">${ibInstalado.toFixed(1)} A</span></div>
                             <div><strong>Disjuntor Geral (QDF):</strong> <span style="color:#2563eb; font-weight:bold;">Disjuntor ${tipoDisjuntorTexto} de ${djGeral} A</span></div>
                             <div><strong>Cabo de Entrada (Alimentador):</strong> <span style="color:#166534; font-weight:bold;">${caboGeral.secao} mm²</span></div>
                         </div>
