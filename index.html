@@ -308,22 +308,23 @@
             return Math.round(btu / 11);
         }
 
-        function dimensionarCircuitoUnico(nome, potenciaW, tensaoV, distanciaM, rede) {
-            let ib = (rede === 'trifasico') ? (potenciaW / (Math.sqrt(3) * tensaoV)) : (potenciaW / tensaoV);
+        function dimensionarCircuitoUnico(nome, potenciaW, tensaoV, distanciaM, ehTrifasicoCarga = false) {
+            // Chuveiros e A/C residenciais comuns são monofásicos/bifásicos conectados a 220V fase-fase ou fase-neutro
+            let ib = ehTrifasicoCarga ? (potenciaW / (Math.sqrt(3) * tensaoV)) : (potenciaW / tensaoV);
             
             let dj = disjuntoresPadrao[0];
             for (let d of disjuntoresPadrao) {
                 if (d >= ib) { dj = d; break; }
             }
 
-            const col = (rede === 'trifasico') ? 'amp3' : 'amp2';
+            const col = ehTrifasicoCarga ? 'amp3' : 'amp2';
             let caboAmp = tabelaCabosNBR[0];
             for (let c of tabelaCabosNBR) {
                 if (c[col] >= dj) { caboAmp = c; break; }
             }
 
             const deltaV = tensaoV * 0.04;
-            const K = (rede === 'trifasico') ? Math.sqrt(3) : 2.0;
+            const K = ehTrifasicoCarga ? Math.sqrt(3) : 2.0;
             const secaoMinQueda = (K * distanciaM * ib) / (56 * deltaV);
 
             let caboQueda = tabelaCabosNBR.find(c => c.secao >= secaoMinQueda) || tabelaCabosNBR[tabelaCabosNBR.length - 1];
@@ -369,9 +370,8 @@
                 const potTotalInstalada = (qChuveiros * pChuveiro) + (qAres * pArW) + wTugs;
                 const potenciaKWInstalada = potTotalInstalada / 1000;
 
-                // Sugestão Inteligente de Rede baseada na Potência Instalada Bruta (kW)
                 let sugestaoRede = "Monofásico";
-                let redeCalculada = rede; // padrão do select
+                let redeCalculada = rede; 
 
                 if (potenciaKWInstalada > 8 && potenciaKWInstalada <= 20) {
                     sugestaoRede = "Bifásico (Recomendado para cargas entre 8kW e 20kW)";
@@ -384,7 +384,6 @@
                     redeCalculada = "monofasico";
                 }
 
-                // Cálculo da corrente bruta na entrada conforme o tipo de ligação ideal/calculado
                 let ibInstalado = 0;
                 let tipoDisjuntorTexto = "";
 
@@ -399,14 +398,12 @@
                     tipoDisjuntorTexto = "Monofásico (Unipolar)";
                 }
 
-                // Fator de demanda residencial
                 let fd = 0.60;
                 if (potTotalInstalada > 10000) fd = 0.55;
                 if (potTotalInstalada > 20000) fd = 0.45;
 
                 const potDemanda = potTotalInstalada * fd;
 
-                // Seleção do Disjuntor Geral
                 let djGeral = disjuntoresPadrao[0];
                 for (let d of disjuntoresPadrao) {
                     if (d >= ibInstalado) { djGeral = d; break; }
@@ -416,14 +413,15 @@
                 let caboGeral = tabelaCabosNBR.find(c => c[col] >= djGeral) || tabelaCabosNBR[tabelaCabosNBR.length - 1];
 
                 let listaCircuitos = [];
+                // Chuveiros e Ar-condicionados residenciais operam em circuito monofásico/bifásico unitário tipicamente em 220V
                 for(let i=1; i<=qChuveiros; i++) {
-                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Chuveiro ${i}`, pChuveiro, tensao, distancia, redeCalculada));
+                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Chuveiro ${i}`, pChuveiro, 220, distancia, false));
                 }
                 for(let i=1; i<=qAres; i++) {
-                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Ar Condicionado ${pArBtu} BTU (${i})`, pArW, tensao, distancia, redeCalculada));
+                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Ar Condicionado ${pArBtu} BTU (${i})`, pArW, 220, distancia, false));
                 }
                 if (wTugs > 0) {
-                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Geral (Iluminação e Tomadas)`, wTugs, tensao, distancia, redeCalculada));
+                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Geral (Iluminação e Tomadas)`, wTugs, 127, distancia, false));
                 }
 
                 const totalDisjuntores = listaCircuitos.length + 1;
@@ -491,8 +489,9 @@
                     potenciaInstalada = parseFloat(document.getElementById('potenciaWatts').value) || 0;
                 }
                 
-                let resCircuito = dimensionarCircuitoUnico("Equipamento / Circuito", potenciaInstalada, tensao, distancia, rede);
-                let tipoDjUnico = (rede === 'trifasico') ? 'Trifásico (Tripolar)' : (rede === 'bifasico' ? 'Bifásico (Bipolar)' : 'Monofásico (Unipolar)');
+                let ehTrifasico = (rede === 'trifasico');
+                let resCircuito = dimensionarCircuitoUnico("Equipamento / Circuito", potenciaInstalada, tensao, distancia, ehTrifasico);
+                let tipoDjUnico = ehTrifasico ? 'Trifásico (Tripolar)' : (rede === 'bifasico' ? 'Bifásico (Bipolar)' : 'Monofásico (Unipolar)');
 
                 resDiv.innerHTML = `
                     <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 18px; border-radius: 8px;">
