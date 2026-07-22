@@ -110,8 +110,10 @@
                     <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px; align-items: end;">
                         <div>
                             <label style="font-size:0.85rem;">Nome do Circuito / Equipamento:</label>
-                            <!-- Input com Datalist: Permite escolher sugestão ou digitar novo item livremente -->
-                            <input type="text" id="novoNomeCircuito" list="sugestoesCircuitos" placeholder="Selecione ou digite..." style="width:100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; background: white;">
+                            <div style="display: flex; gap: 5px;">
+                                <input type="text" id="novoNomeCircuito" list="sugestoesCircuitos" placeholder="Selecione ou digite..." style="width:100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; background: white;">
+                                <button type="button" onclick="adicionarNovaSugestaoDatalist()" title="Adicionar novo item à lista de opções" style="background: #334155; color: white; border: none; padding: 0 12px; border-radius: 4px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-plus"></i></button>
+                            </div>
                             <datalist id="sugestoesCircuitos">
                                 <option value="Chuveiro Principal">
                                 <option value="Chuveiro Superior">
@@ -137,7 +139,7 @@
                             </select>
                         </div>
                         <div>
-                            <button type="button" onclick="adicionarCircuitoCustomizado()" style="background: #166534; color: white; border: none; padding: 9px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-plus"></i></button>
+                            <button type="button" onclick="adicionarCircuitoCustomizado()" style="background: #166534; color: white; border: none; padding: 9px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;" title="Adicionar circuito ao quadro"><i class="fa-solid fa-plus"></i></button>
                         </div>
                     </div>
 
@@ -321,6 +323,35 @@
             if(tipo === 'casa') {
                 atualizarListaCircuitosTela();
                 document.getElementById('btnCalcularAvancado').click();
+            }
+        }
+
+        function adicionarNovaSugestaoDatalist() {
+            const input = document.getElementById('novoNomeCircuito');
+            const valor = input.value.trim();
+            const datalist = document.getElementById('sugestoesCircuitos');
+
+            if (!valor) {
+                alert("Digite o nome do novo circuito ou equipamento para incluí-lo na lista.");
+                return;
+            }
+
+            // Verifica se já existe na lista
+            let existe = false;
+            for (let opt of datalist.options) {
+                if (opt.value.toLowerCase() === valor.toLowerCase()) {
+                    existe = true;
+                    break;
+                }
+            }
+
+            if (!existe) {
+                const novaOpcao = document.createElement('option');
+                novaOpcao.value = valor;
+                datalist.appendChild(novaOpcao);
+                alert(`"${valor}" foi adicionado com sucesso às opções de equipamentos!`);
+            } else {
+                alert(`"${valor}" já consta na lista de sugestões.`);
             }
         }
 
