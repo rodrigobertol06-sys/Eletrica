@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clademir Bertol - Engenharia, Elétrica & Automação</title>
+    <title>Clademir Bertol - Elétrica & Automação</title>
     <link rel="manifest" href="./manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./style.css">
@@ -16,7 +16,7 @@
             <img src="./Logo-Pai.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
             <div class="nav-titles">
                 <h1>Clademir Bertol</h1>
-                <p>Engenharia, Elétrica & Automação</p>
+                <p>Elétrica & Automação</p>
             </div>
         </div>
         <div class="nav-badge">
@@ -32,7 +32,7 @@
             <div class="card-modulo" onclick="abrirFerramenta('calcFerramenta')">
                 <div class="card-icon icon-calc"><i class="fa-solid fa-calculator"></i></div>
                 <h3>Calculadora & Dimensionamento NBR 5410</h3>
-                <p>Cálculo de queda de tensão, ampacidade de cabos, tempo de disjuntor e entrada residencial.</p>
+                <p>Dimensionamento de entrada residencial, quadro de circuitos, disjuntores e ampacidade.</p>
             </div>
 
             <div class="card-modulo" onclick="abrirFerramenta('enciclopediaFerramenta')">
@@ -68,17 +68,17 @@
                     <label>Modo de Cálculo / Carga:</label>
                     <select id="tipoUso" onchange="alternarCamposCalculadora()">
                         <option value="geral">Carga Geral (Equipamento / Circuito Único)</option>
-                        <option value="ar">Ar Condicionado (BTU -> Watts)</option>
-                        <option value="casa">Estimativa de Entrada Residencial (Casa Inteira)</option>
+                        <option value="ar">Ar Condicionado Individual (BTU -> Watts)</option>
+                        <option value="casa">Entrada Residencial Completa (Quadro de Circuitos)</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
                     <label>Tipo de Rede:</label>
                     <select id="tipoRede">
-                        <option value="monofasico">Monofásico (1F + N) - 127V ou 220V</option>
-                        <option value="bifasico" selected>Bifásico (2F + N) - 220V</option>
-                        <option value="trifasico">Trifásico (3F + N) - 220V/380V</option>
+                        <option value="monofasico">Monofásico (1F + N)</option>
+                        <option value="bifasico" selected>Bifásico (2F + N)</option>
+                        <option value="trifasico">Trifásico (3F + N)</option>
                     </select>
                 </div>
 
@@ -105,20 +105,30 @@
 
                 <!-- CAMPOS ENTRADA RESIDENCIAL -->
                 <div class="form-group campo-casa" style="display:none;">
-                    <label>Qtd. Chuveiros Elétricos (~7500W cada):</label>
-                    <input type="number" id="qtdChuveiros" value="1" min="0">
+                    <label>Qtd. Chuveiros Elétricos:</label>
+                    <input type="number" id="qtdChuveiros" value="2" min="0">
                 </div>
                 <div class="form-group campo-casa" style="display:none;">
-                    <label>Qtd. Ar Condicionado (~1200W cada):</label>
+                    <label>Potência por Chuveiro (Watts):</label>
+                    <input type="number" id="potChuveiroW" value="7500" placeholder="Ex: 7500">
+                </div>
+
+                <div class="form-group campo-casa" style="display:none;">
+                    <label>Qtd. Ar Condicionado:</label>
                     <input type="number" id="qtdAres" value="2" min="0">
                 </div>
+                <div class="form-group campo-casa" style="display:none;">
+                    <label>Potência por Ar Condicionado (Watts):</label>
+                    <input type="number" id="potArW" value="1200" placeholder="Ex: 1200">
+                </div>
+
                 <div class="form-group campo-casa" style="display:none;">
                     <label>Iluminação e Tomadas TUGs (Watts Est.):</label>
                     <input type="number" id="wattsTugs" value="4000" placeholder="Ex: 4000">
                 </div>
 
                 <div class="form-group">
-                    <label>Distância do Quadro / Ramal (Metros):</label>
+                    <label>Distância do Quadro ao Carga/Ramal (Metros):</label>
                     <input type="number" id="distanciaMetros" placeholder="Ex: 15" value="15">
                 </div>
             </div>
@@ -289,12 +299,55 @@
             { secao: 25.0, amp2: 101, amp3: 89 },
             { secao: 35.0, amp2: 125, amp3: 110 },
             { secao: 50.0, amp2: 151, amp3: 134 },
-            { secao: 70.0, amp2: 192, amp3: 171 },
-            { secao: 95.0, amp2: 232, amp3: 207 },
-            { secao: 120.0, amp2: 269, amp3: 239 }
+            { secao: 70.0, amp2: 192, amp3: 171 }
         ];
 
-        const disjuntoresPadrao = [10, 16, 20, 25, 32, 40, 50, 63, 70, 80, 100, 125, 160, 200];
+        const disjuntoresPadrao = [10, 16, 20, 25, 32, 40, 50, 63, 70, 80, 100, 125, 160];
+
+        // Função auxiliar para dimensionar 1 circuito terminal
+        function dimensionarCircuitoUnico(nome, potenciaW, tensaoV, distanciaM, rede) {
+            let ib = (rede === 'trifasico') ? (potenciaW / (Math.sqrt(3) * tensaoV)) : (potenciaW / tensaoV);
+            
+            // Disjuntor do circuito
+            let dj = disjuntoresPadrao[0];
+            for (let d of disjuntoresPadrao) {
+                if (d >= ib) { dj = d; break; }
+            }
+
+            // Ampacidade mínima
+            const col = (rede === 'trifasico') ? 'amp3' : 'amp2';
+            let caboAmp = tabelaCabosNBR[0];
+            for (let c of tabelaCabosNBR) {
+                if (c[col] >= dj) { caboAmp = c; break; }
+            }
+
+            // Queda de tensão (máx 4%)
+            const deltaV = tensaoV * 0.04;
+            const K = (rede === 'trifasico') ? Math.sqrt(3) : 2.0;
+            const secaoMinQueda = (K * distanciaM * ib) / (56 * deltaV);
+
+            let caboQueda = tabelaCabosNBR.find(c => c.secao >= secaoMinQueda) || tabelaCabosNBR[tabelaCabosNBR.length - 1];
+            
+            // Escolhe a maior bitola e respeita mínimo de norma (2.5mm² para força)
+            let caboFinal = (caboQueda.secao > caboAmp.secao) ? caboQueda : caboAmp;
+            if (caboFinal.secao < 2.5 && nome.toLowerCase().indexOf('iluminação') === -1) {
+                caboFinal = tabelaCabosNBR.find(c => c.secao >= 2.5);
+            }
+
+            let iz = caboFinal[col];
+            let qVolts = (K * distanciaM * ib) / (56 * caboFinal.secao);
+            let qPorcentagem = (qVolts / tensaoV) * 100;
+
+            return {
+                nome: nome,
+                potenciaW: potenciaW,
+                ib: ib,
+                disjuntor: dj,
+                caboSecao: caboFinal.secao,
+                ampacidadeIz: iz,
+                quedaPct: qPorcentagem
+            };
+        }
 
         document.getElementById('btnCalcularAvancado').addEventListener('click', function() {
             const tipo = document.getElementById('tipoUso').value;
@@ -304,110 +357,156 @@
             const resDiv = document.getElementById('resultadoAvancado');
             resDiv.style.display = 'block';
 
-            let potenciaInstalada = 0;
-            let potenciaDemanda = 0;
-            let detalheCasa = "";
-
             if (tipo === 'casa') {
-                const chuveiros = (parseInt(document.getElementById('qtdChuveiros').value) || 0) * 7500;
-                const ares = (parseInt(document.getElementById('qtdAres').value) || 0) * 1200;
-                const tugs = parseFloat(document.getElementById('wattsTugs').value) || 0;
+                const qChuveiros = parseInt(document.getElementById('qtdChuveiros').value) || 0;
+                const pChuveiro = parseFloat(document.getElementById('potChuveiroW').value) || 7500;
+                
+                const qAres = parseInt(document.getElementById('qtdAres').value) || 0;
+                const pAr = parseFloat(document.getElementById('potArW').value) || 1200;
+                
+                const wTugs = parseFloat(document.getElementById('wattsTugs').value) || 0;
 
-                potenciaInstalada = chuveiros + ares + tugs;
-                // Fator de Demanda NBR 5410 / Concessionárias para Residências
-                let fatorDemanda = 0.60; 
-                if (chuveiros > 10000) fatorDemanda = 0.55; 
+                const potTotalInstalada = (qChuveiros * pChuveiro) + (qAres * pAr) + wTugs;
 
-                potenciaDemanda = potenciaInstalada * fatorDemanda;
-                detalheCasa = `
-                    • <strong>Potência Total Instalada:</strong> ${(potenciaInstalada/1000).toFixed(2)} kW<br>
-                    • <strong>Potência com Fator de Demanda (NBR 5410):</strong> ${(potenciaDemanda/1000).toFixed(2)} kW (F.D. ${(fatorDemanda*100)}%)<br>
+                // Fator de demanda NBR 5410
+                let fd = 0.60;
+                if (potTotalInstalada > 10000) fd = 0.55;
+                if (potTotalInstalada > 20000) fd = 0.45;
+
+                const potDemanda = potTotalInstalada * fd;
+                const ibGeral = (rede === 'trifasico') ? (potDemanda / (Math.sqrt(3) * tensao)) : (potDemanda / tensao);
+
+                // Disjuntor Geral
+                let djGeral = disjuntoresPadrao[0];
+                for (let d of disjuntoresPadrao) {
+                    if (d >= ibGeral) { djGeral = d; break; }
+                }
+
+                // Cabo do Ramal Geral
+                const col = (rede === 'trifasico') ? 'amp3' : 'amp2';
+                let caboGeral = tabelaCabosNBR.find(c => c[col] >= djGeral) || tabelaCabosNBR[tabelaCabosNBR.length - 1];
+
+                // Mapeamento de Circuitos Individuais (TUEs)
+                let listaCircuitos = [];
+                
+                for(let i=1; i<=qChuveiros; i++) {
+                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Chuveiro ${i}`, pChuveiro, tensao, distancia, rede));
+                }
+                for(let i=1; i<=qAres; i++) {
+                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Ar Condicionado ${i}`, pAr, tensao, distancia, rede));
+                }
+                if (wTugs > 0) {
+                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Geral (Iluminação e Tomadas)`, wTugs, tensao, distancia, rede));
+                }
+
+                const totalDisjuntores = listaCircuitos.length + 1; // Circuitos + 1 Geral
+
+                let htmlCircuitos = "";
+                listaCircuitos.forEach((c, idx) => {
+                    htmlCircuitos += `
+                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                            <td style="padding: 8px;"><strong>C${idx+1}:</strong> ${c.nome}</td>
+                            <td style="padding: 8px;">${c.potenciaW} W</td>
+                            <td style="padding: 8px;">${c.ib.toFixed(1)} A</td>
+                            <td style="padding: 8px; color: #2563eb; font-weight:bold;">${c.disjuntor} A</td>
+                            <td style="padding: 8px; color: #166534; font-weight:bold;">${c.caboSecao} mm²</td>
+                            <td style="padding: 8px;">${c.quedaPct.toFixed(1)}%</td>
+                        </tr>
+                    `;
+                });
+
+                resDiv.innerHTML = `
+                    <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 18px; border-radius: 8px;">
+                        <h3 style="color: #0b132b; margin-bottom: 12px;"><i class="fa-solid fa-house-bolt"></i> Dimensionamento de Entrada Residencial & Quadro</h3>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; background: #ffffff; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
+                            <div><strong>Potência Instalada:</strong> ${(potTotalInstalada/1000).toFixed(2)} kW</div>
+                            <div><strong>Potência Calculada (Demanda):</strong> ${(potDemanda/1000).toFixed(2)} kW</div>
+                            <div><strong>Fator de Demanda:</strong> ${(fd*100).toFixed(0)}%</div>
+                            <div><strong>Corrente de Entrada (Ib Geral):</strong> <span style="color:#d97706; font-weight:bold;">${ibGeral.toFixed(1)} A</span></div>
+                            <div><strong>Disjuntor Geral (QDF):</strong> <span style="color:#2563eb; font-weight:bold;">${djGeral} A</span></div>
+                            <div><strong>Cabo de Entrada (Alimentador):</strong> <span style="color:#166534; font-weight:bold;">${caboGeral.secao} mm²</span></div>
+                        </div>
+
+                        <h4 style="color: #1e293b; margin-top: 15px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-list-check"></i> Detalhamento do Quadro de Distribuição (Total: ${totalDisjuntores} Disjuntores)
+                        </h4>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 10px;">
+                            * Requisito NBR 5410: Chuveiros e Ar Condicionados devem possuir disjuntor e cabo exclusivos (Circuito TUE).
+                        </p>
+
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.9rem; background: white; border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1;">
+                                <thead style="background: #0b132b; color: white;">
+                                    <tr>
+                                        <th style="padding: 8px;">Circuito</th>
+                                        <th style="padding: 8px;">Potência</th>
+                                        <th style="padding: 8px;">Corrente (Ib)</th>
+                                        <th style="padding: 8px;">Disjuntor</th>
+                                        <th style="padding: 8px;">Cabo Rec.</th>
+                                        <th style="padding: 8px;">Queda (ΔV)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${htmlCircuitos}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- TABELA GUIA DE AMPACIDADE E DISTÂNCIA -->
+                        <div style="margin-top: 20px; padding: 15px; background: #ffffff; border-radius: 8px; border: 1px solid #cbd5e1;">
+                            <h4 style="color:#0b132b; margin-bottom:10px;"><i class="fa-solid fa-table"></i> Guia Rápido de Cabos e Ampacidade (NBR 5410 em 220V)</h4>
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: center;">
+                                    <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                                        <th style="padding: 6px;">Bitola (mm²)</th>
+                                        <th style="padding: 6px;">Suporta até (A)</th>
+                                        <th style="padding: 6px;">Potência Máx (220V Monof/Bif)</th>
+                                        <th style="padding: 6px;">Disjuntor Indicado</th>
+                                        <th style="padding: 6px;">Distância Máx p/ 4% ΔV</th>
+                                    </tr>
+                                    <tr><td>1.5 mm²</td><td>17.5 A</td><td>~3.800 W</td><td>10A - 16A</td><td>~ 18 metros</td></tr>
+                                    <tr><td>2.5 mm²</td><td>24.0 A</td><td>~5.200 W</td><td>20A</td><td>~ 22 metros</td></tr>
+                                    <tr><td>4.0 mm²</td><td>32.0 A</td><td>~7.000 W</td><td>25A - 32A</td><td>~ 26 metros</td></tr>
+                                    <tr><td>6.0 mm²</td><td>41.0 A</td><td>~9.000 W</td><td>40A</td><td>~ 31 metros</td></tr>
+                                    <tr><td>10.0 mm²</td><td>57.0 A</td><td>~12.500 W</td><td>50A - 63A</td><td>~ 40 metros</td></tr>
+                                    <tr><td>16.0 mm²</td><td>76.0 A</td><td>~16.700 W</td><td>70A - 80A</td><td>~ 52 metros</td></tr>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
                 `;
-            } else if (tipo === 'ar') {
-                const btus = parseFloat(document.getElementById('inputBtus').value) || 0;
-                potenciaInstalada = btus / 10; // Conversão média BTU -> Watts elétricos
-                potenciaDemanda = potenciaInstalada;
             } else {
-                potenciaInstalada = parseFloat(document.getElementById('potenciaWatts').value) || 0;
-                potenciaDemanda = potenciaInstalada;
+                // MODO EQUIPAMENTO ÚNICO OU AR CONDICIONADO ISOLADO
+                let potenciaInstalada = (tipo === 'ar') ? (parseFloat(document.getElementById('inputBtus').value)||0)/10 : (parseFloat(document.getElementById('potenciaWatts').value)||0);
+                
+                let resCircuito = dimensionarCircuitoUnico("Equipamento / Circuito", potenciaInstalada, tensao, distancia, rede);
+
+                const iSemDisparo = (resCircuito.disjuntor * 1.13).toFixed(1);
+                const iComDisparo1h = (resCircuito.disjuntor * 1.45).toFixed(1);
+                const iCurto = (resCircuito.disjuntor * 5.0).toFixed(0);
+
+                resDiv.innerHTML = `
+                    <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 18px; border-radius: 8px;">
+                        <h3 style="color: #0b132b; margin-bottom: 10px;"><i class="fa-solid fa-file-contract"></i> Relatório de Circuito Único</h3>
+                        • <strong>Corrente Nominal (Ib):</strong> <span style="color:#d97706; font-weight:bold;">${resCircuito.ib.toFixed(1)} A</span><br>
+                        • <strong>Disjuntor Sugerido (In):</strong> <span style="color:#2563eb; font-weight:bold;">${resCircuito.disjuntor} A</span> (Termomagnético Curva C)<br>
+                        • <strong>Cabo Recomendado:</strong> <span style="color:#166534; font-weight:bold;">${resCircuito.caboSecao} mm²</span> (Distância: ${distancia}m)<br>
+                        • <strong>Ampacidade do Cabo (Iz):</strong> Suporta até ${resCircuito.ampacidadeIz} A em eletroduto<br>
+                        • <strong>Queda de Tensão (ΔV):</strong> ${resCircuito.quedaPct.toFixed(2)}% ${resCircuito.quedaPct > 4 ? '<span style="color:red;">⚠️ Excede 4%! Bitola aumentada para compensar a distância.</span>' : '<span style="color:green;">✓ Dentro do limite NBR 5410 (&le;4%)</span>'}<br>
+
+                        <hr style="margin: 15px 0; border:0; border-top:1px solid #e2e8f0;">
+
+                        <h4 style="color:#1e293b;"><i class="fa-solid fa-clock-rotate-left"></i> Tempo de Atuação do Disjuntor (${resCircuito.disjuntor}A Curva C)</h4>
+                        <p style="font-size: 0.88rem; color: #475569; margin-top:5px;">
+                            • <strong>Carga Contínua (Até ${iSemDisparo} A):</strong> O disjuntor opera indefinidamente sem armar/disparar.<br>
+                            • <strong>Sobrecarga Térmica (${iSemDisparo} A a ${iComDisparo1h} A):</strong> Aquecimento gradual do bimetálico. Disparo em <u>até 1 hora</u>.<br>
+                            • <strong>Curto-Circuito (Acima de ${iCurto} A):</strong> Atuação magnética ultrarrápida em <u>menos de 0.1 segundo</u>.
+                        </p>
+                    </div>
+                `;
             }
-
-            // Cálculo da Corrente de Projeto (Ib)
-            let correnteIb = 0;
-            if (rede === 'trifasico') {
-                correnteIb = potenciaDemanda / (Math.sqrt(3) * tensao);
-            } else {
-                correnteIb = potenciaDemanda / tensao;
-            }
-
-            // Escolha do Disjuntor (In >= Ib)
-            let disjuntorIn = disjuntoresPadrao[0];
-            for (let d of disjuntoresPadrao) {
-                if (d >= correnteIb) {
-                    disjuntorIn = d;
-                    break;
-                }
-            }
-
-            // 1. Bitola por AMPACIDADE (Iz >= In)
-            const condutoresCarregados = (rede === 'trifasico') ? 'amp3' : 'amp2';
-            let caboAmpacidade = tabelaCabosNBR[0];
-            for (let c of tabelaCabosNBR) {
-                if (c[condutoresCarregados] >= disjuntorIn) {
-                    caboAmpacidade = c;
-                    break;
-                }
-            }
-
-            // 2. Bitola por QUEDA DE TENSÃO (Limite de 4% segundo NBR 5410)
-            // Fórmula: S = (K * L * I) / (gamma * deltaV) | Cobre gamma = 56 m/(ohm.mm²)
-            const deltaV_adm = tensao * 0.04; // 4% de queda máxima permitida
-            const K = (rede === 'trifasico') ? Math.sqrt(3) : 2.0;
-            const secaoQuedaMinima = (K * distancia * correnteIb) / (56 * deltaV_adm);
-
-            let caboQueda = tabelaCabosNBR.find(c => c.secao >= secaoQuedaMinima) || tabelaCabosNBR[tabelaCabosNBR.length - 1];
-
-            // Seleciona a maior bitola entre Ampacidade e Queda de Tensão
-            let caboFinal = (caboQueda.secao > caboAmpacidade.secao) ? caboQueda : caboAmpacidade;
-            let Iz = caboFinal[condutoresCarregados];
-
-            // Percentual real da queda de tensão com o cabo escolhido
-            let quedaRealVolts = (K * distancia * correnteIb) / (56 * caboFinal.secao);
-            let quedaRealPorcentagem = (quedaRealVolts / tensao) * 100;
-
-            // Curva do Disjuntor (Tempo x Carga)
-            const iSemDisparo = (disjuntorIn * 1.13).toFixed(1);
-            const iComDisparo1h = (disjuntorIn * 1.45).toFixed(1);
-            const iCurtoCircuito = (disjuntorIn * 5.0).toFixed(0);
-
-            resDiv.innerHTML = `
-                <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px;">
-                    <h3 style="color: #0b132b; margin-bottom: 10px;"><i class="fa-solid fa-file-contract"></i> Relatório de Dimensionamento Elétrico</h3>
-                    ${detalheCasa}
-                    • <strong>Corrente Nominal de Projeto ($I_b$):</strong> <span style="color:#d97706; font-weight:bold;">${correnteIb.toFixed(1)} A</span><br>
-                    • <strong>Disjuntor Sugerido ($I_n$):</strong> <span style="color:#2563eb; font-weight:bold;">${disjuntorIn} A</span> (Termomagnético Curva C)<br>
-                    • <strong>Cabo Recomendado:</strong> <span style="color:#166534; font-weight:bold;">${caboFinal.secao} mm²</span> (Distância: ${distancia}m)<br>
-                    • <strong>Capacidade de Condução do Cabo ($I_z$):</strong> ${Iz} A em eletroduto (NBR 5410)<br>
-                    • <strong>Queda de Tensão Calculada ($\Delta V$):</strong> ${quedaRealPorcentagem.toFixed(2)}% (${quedaRealVolts.toFixed(2)}V) ${quedaRealPorcentagem > 4 ? '<span style="color:red;">⚠️ Excede 4%! Bitola aumentada.</span>' : '<span style="color:green;">✓ Dentro do limite da NBR 5410 (&le;4%)</span>'}<br>
-                    
-                    <hr style="margin: 15px 0; border:0; border-top:1px solid #e2e8f0;">
-                    
-                    <h4 style="color:#1e293b;"><i class="fa-solid fa-clock-rotate-left"></i> Comportamento Térmico do Disjuntor (Norma NBR NM 60898 - Curva C)</h4>
-                    <p style="font-size: 0.88rem; color: #475569; margin-top:5px;">
-                        • <strong>Até ${iSemDisparo} A (1,13 &times; $I_n$):</strong> Carga contínua. O disjuntor <u>NÃO dispara</u>.<br>
-                        • <strong>Entre ${iSemDisparo} A e ${iComDisparo1h} A (1,45 &times; $I_n$):</strong> Zona de sobrecarga. O disparo térmico atua em <u>até 1 hora</u>.<br>
-                        • <strong>Acima de ${iCurtoCircuito} A (5 &times; a 10 &times; $I_n$):</strong> Curto-circuito. Disparo magnético instantâneo em <u>menos de 0,1 segundo</u>.
-                    </p>
-
-                    <hr style="margin: 15px 0; border:0; border-top:1px solid #e2e8f0;">
-
-                    <h4 style="color:#1e293b;"><i class="fa-solid fa-book"></i> Fundamentação Técnica & Literatura</h4>
-                    <p style="font-size: 0.85rem; color: #64748b; margin-top:5px;">
-                        * <strong>NBR 5410 (Item 6.2.5):</strong> A regra de ouro de coordenação de proteção é <strong>$I_b \le I_n \le I_z$</strong>. O disjuntor deve proteger o cabo contra superaquecimento.<br>
-                        * <strong>Critério da Queda de Tensão (Mamede / Creder):</strong> Condutores longos aumentam a resistência elétrica. Se a queda ultrapassar 4%, o motor perde torque e aparelhos eletrônicos sofrem sub-tensão.
-                    </p>
-                </div>
-            `;
         });
 
         const tabelaPrecos = {
