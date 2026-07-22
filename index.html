@@ -1,288 +1,565 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clademir Bertol - Elétrica & Automação</title>
-    <style>
-        :root {
-            --primary-color: #0056b3;
-            --secondary-color: #28a745;
-            --bg-color: #f4f6f9;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --border-color: #cccccc;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        header h1 {
-            color: var(--primary-color);
-            margin-bottom: 5px;
-        }
-
-        header p {
-            color: #666;
-            font-size: 1.1rem;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        .card-modulo {
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-
-        .card-modulo h3 {
-            margin-top: 0;
-            color: var(--primary-color);
-            font-size: 1.2rem;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 8px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 1rem;
-            box-sizing: border-box;
-        }
-
-        .resultado-painel {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 6px;
-            border-left: 4px solid var(--secondary-color);
-            margin-top: 15px;
-        }
-
-        .resultado-painel p {
-            margin: 8px 0;
-            font-size: 1rem;
-        }
-
-        .btn-acao {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-            width: 100%;
-        }
-
-        .btn-acao:hover {
-            background-color: #004085;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clademir Bertol - Elétrica & Automação</title>
+    <link rel="manifest" href="./manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
-    <header>
-        <h1>Clademir Bertol</h1>
-        <p>Sistema de Elétrica & Automação</p>
-    </header>
+    <!-- BARRA SUPERIOR -->
+    <header class="top-navbar">
+        <div class="nav-brand">
+            <img src="./Logo-Pai.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+            <div class="nav-titles">
+                <h1>Clademir Bertol</h1>
+                <p>Elétrica & Automação</p>
+            </div>
+        </div>
+        <div class="nav-badge">
+            <i class="fa-solid fa-bolt"></i> Sistema Online
+        </div>
+    </header>
 
-    <div class="container">
+    <div class="container">
 
-        <!-- 1. Módulo de Validação de Ar-Condicionado (Com conversão BTU -> Watts) -->
-        <div class="card-modulo" id="card-ar-condicionado">
-            <h3>Validação de Ar-Condicionado (BTU / Watts)</h3>
-            <div class="form-group">
-                <label for="inputBtu">Capacidade do Aparelho (BTU/h):</label>
-                <input type="number" id="inputBtu" placeholder="Ex: 9000, 12000, 18000..." oninput="calcularArCondicionado()">
-            </div>
-            
-            <div class="resultado-painel">
-                <p><strong>Potência Elétrica (Watts):</strong> <span id="resWatts">0</span> W</p>
-                <p><strong>Corrente Estimada (220V):</strong> <span id="resCorrente">0</span> A</p>
-                <p><strong>Disjuntor Sugerido (NBR 5410):</strong> <span id="resDisjuntor">--</span></p>
-            </div>
-        </div>
+        <!-- TELA PRINCIPAL: PAINEL DE CARDS -->
+        <section id="painelMenu" class="dashboard-grid">
+            
+            <div class="card-modulo" onclick="abrirFerramenta('calcFerramenta')">
+                <div class="card-icon icon-calc"><i class="fa-solid fa-calculator"></i></div>
+                <h3>Calculadora & Dimensionamento NBR 5410</h3>
+                <p>Dimensionamento de entrada residencial, quadro de circuitos, disjuntores e ampacidade.</p>
+            </div>
 
-        <!-- 2. Módulo de Dimensionamento Elétrico (NBR 5410) -->
-        <div class="card-modulo" id="card-nbr5410">
-            <h3>Dimensionamento de Circuitos (NBR 5410)</h3>
-            <div class="form-group">
-                <label for="potenciaCarga">Potência da Carga (W):</label>
-                <input type="number" id="potenciaCarga" placeholder="Ex: 3500">
-            </div>
-            <div class="form-group">
-                <label for="tensaoCircuito">Tensão do Sistema (V):</label>
-                <select id="tensaoCircuito">
-                    <option value="127">127V</option>
-                    <option value="220" selected>220V</option>
-                </select>
-            </div>
-            <button class="btn-acao" onclick="calcularNBR()">Calcular Condutor e Proteção</button>
-            
-            <div class="resultado-painel" id="resNbrContainer">
-                <p><strong>Corrente Calculada (Iz):</strong> <span id="resCorrenteNbr">0</span> A</p>
-                <p><strong>Bitola Mínima Sugerida:</strong> <span id="resBitola">--</span> mm²</p>
-            </div>
-        </div>
+            <div class="card-modulo" onclick="abrirFerramenta('enciclopediaFerramenta')">
+                <div class="card-icon icon-auto"><i class="fa-solid fa-book-atlas"></i></div>
+                <h3>Enciclopédia & Automação</h3>
+                <p>Catálogo visual de contatores, relés, borneiras e a "sopa de letrinhas" da automação.</p>
+            </div>
 
-        <!-- 3. Enciclopédia de Comandos Elétricos -->
-        <div class="card-modulo" id="card-comandos">
-            <h3>Enciclopédia de Comandos Elétricos</h3>
-            <div class="form-group">
-                <label for="selectComando">Selecione o Componente / Partida:</label>
-                <select id="selectComando" onchange="exibirDetalhesComando()">
-                    <option value="">-- Escolha uma opção --</option>
-                    <option value="direta">Partida Direta de Motor</option>
-                    <option value="reversao">Partida Direta com Reversão</option>
-                    <option value="estrela-triangulo">Partida Estrela-Triângulo</option>
-                    <option value="sensor-npn-pnp">Sensores NPN vs PNP</option>
-                </select>
-            </div>
-            <div class="resultado-painel" id="detalhesComando">
-                <p>Selecione um item acima para carregar a descrição e lógica de acionamento.</p>
-            </div>
-        </div>
+            <div class="card-modulo" onclick="abrirFerramenta('guiaFerramenta')">
+                <div class="card-icon icon-guia"><i class="fa-solid fa-diagram-project"></i></div>
+                <h3>Esquemas Lineart</h3>
+                <p>Diagramas vetoriais com imagens reais e fios coloridos.</p>
+            </div>
 
-        <!-- 4. Emissor de Orçamentos -->
-        <div class="card-modulo" id="card-orcamento">
-            <h3>Emissor de Orçamentos de Serviços</h3>
-            <div class="form-group">
-                <label for="clienteNome">Nome do Cliente:</label>
-                <input type="text" id="clienteNome" placeholder="Nome completo ou empresa">
-            </div>
-            <div class="form-group">
-                <label for="descricaoServico">Descrição dos Serviços de Elétrica/Automação:</label>
-                <input type="text" id="descricaoServico" placeholder="Ex: Instalação de painel de comandos e infraestrutura">
-            </div>
-            <div class="form-group">
-                <label for="valorServico">Valor Total Estimado (R$):</label>
-                <input type="number" id="valorServico" placeholder="0,00">
-            </div>
-            <button class="btn-acao" onclick="gerarOrcamento()">Salvar / Visualizar Orçamento</button>
-            
-            <div class="resultado-painel" id="resOrcamento" style="display:none;">
-                <p><strong>Orçamento gerado com sucesso para:</strong> <span id="outCliente"></span></p>
-                <p><strong>Total:</strong> R$ <span id="outValor"></span></p>
-            </div>
-        </div>
+            <div class="card-modulo" onclick="abrirFerramenta('orcFerramenta')">
+                <div class="card-icon icon-orc"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                <h3>Emitir Orçamento</h3>
+                <p>Registro de clientes, seleção de serviços com sugestão de valores e salvamento.</p>
+            </div>
 
-    </div>
+        </section>
 
-    <script>
-        // Lógica do Módulo de Ar-Condicionado
-        function calcularArCondicionado() {
-            const btuInput = document.getElementById('inputBtu').value;
-            const btu = parseFloat(btuInput);
 
-            const elWatts = document.getElementById('resWatts');
-            const elCorrente = document.getElementById('resCorrente');
-            const elDisjuntor = document.getElementById('resDisjuntor');
+        <!-- ================= FERRAMENTA 1: CALCULADORA NBR 5410 ================= -->
+        <div id="calcFerramenta" class="ferramenta-container">
+            <div class="ferramenta-header">
+                <h2><i class="fa-solid fa-calculator"></i> Dimensionamento Elétrico Avançado (NBR 5410)</h2>
+                <button class="btn-fechar" onclick="fecharFerramentas()"><i class="fa-solid fa-xmark"></i> Fechar</button>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Modo de Cálculo / Carga:</label>
+                    <select id="tipoUso" onchange="alternarCamposCalculadora()">
+                        <option value="geral">Carga Geral (Equipamento / Circuito Único)</option>
+                        <option value="ar">Ar Condicionado Individual (BTU -> Watts)</option>
+                        <option value="casa">Entrada Residencial Completa (Quadro de Circuitos)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tipo de Rede:</label>
+                    <select id="tipoRede">
+                        <option value="monofasico">Monofásico (1F + N)</option>
+                        <option value="bifasico" selected>Bifásico (2F + N)</option>
+                        <option value="trifasico">Trifásico (3F + N)</option>
+                    </select>
+                </div>
 
-            if (!btu || btu <= 0) {
-                elWatts.textContent = "0";
-                elCorrente.textContent = "0";
-                elDisjuntor.textContent = "--";
-                return;
-            }
+                <div class="form-group">
+                    <label>Tensão de Linha / Fase (Volts):</label>
+                    <select id="tensaoVolts">
+                        <option value="127">127V</option>
+                        <option value="220" selected>220V</option>
+                        <option value="380">380V</option>
+                    </select>
+                </div>
 
-            const watts = Math.round(btu / 11); 
-            const tensao = 220;
-            const corrente = (watts / tensao).toFixed(2);
+                <!-- CAMPO CARGA GERAL -->
+                <div class="form-group campo-geral">
+                    <label>Potência Total (Watts):</label>
+                    <input type="number" id="potenciaWatts" placeholder="Ex: 10000" value="10000">
+                </div>
 
-            let disjuntor = "10A";
-            const corrNum = parseFloat(corrente);
-            if (corrNum > 8 && corrNum <= 12) {
-                disjuntor = "16A";
-            } else if (corrNum > 12 && corrNum <= 16) {
-                disjuntor = "20A";
-            } else if (corrNum > 16) {
-                disjuntor = "25A";
-            }
+                <!-- CAMPO AR CONDICIONADO -->
+                <div class="form-group campo-ar" style="display:none;">
+                    <label>Capacidade em BTUs:</label>
+                    <input type="number" id="inputBtus" placeholder="Ex: 12000" value="12000">
+                </div>
 
-            elWatts.textContent = watts.toLocaleString('pt-BR');
-            elCorrente.textContent = corrente.replace('.', ',');
-            elDisjuntor.textContent = disjuntor;
-        }
+                <!-- CAMPOS ENTRADA RESIDENCIAL -->
+                <div class="form-group campo-casa" style="display:none;">
+                    <label>Qtd. Chuveiros Elétricos:</label>
+                    <input type="number" id="qtdChuveiros" value="2" min="0">
+                </div>
+                <div class="form-group campo-casa" style="display:none;">
+                    <label>Potência por Chuveiro (Watts):</label>
+                    <input type="number" id="potChuveiroW" value="7500" placeholder="Ex: 7500">
+                </div>
 
-        // Lógica do Módulo NBR 5410 Simplificado
-        function calcularNBR() {
-            const potencia = parseFloat(document.getElementById('potenciaCarga').value);
-            const tensao = parseFloat(document.getElementById('tensaoCircuito').value);
+                <div class="form-group campo-casa" style="display:none;">
+                    <label>Qtd. Ar Condicionado:</label>
+                    <input type="number" id="qtdAres" value="2" min="0">
+                </div>
+                <div class="form-group campo-casa" style="display:none;">
+                    <label>Potência por Ar Condicionado (Watts):</label>
+                    <input type="number" id="potArW" value="1200" placeholder="Ex: 1200">
+                </div>
 
-            if (!potencia || potencia <= 0) {
-                alert('Informe uma potência válida.');
-                return;
-            }
+                <div class="form-group campo-casa" style="display:none;">
+                    <label>Iluminação e Tomadas TUGs (Watts Est.):</label>
+                    <input type="number" id="wattsTugs" value="4000" placeholder="Ex: 4000">
+                </div>
 
-            const corrente = potencia / tensao;
-            let bitola = "2.5";
-            if (corrente > 21 && corrente <= 28) bitola = "4.0";
-            else if (corrente > 28 && corrente <= 36) bitola = "6.0";
-            else if (corrente > 36) bitola = "10.0";
+                <div class="form-group">
+                    <label>Distância do Quadro ao Carga/Ramal (Metros):</label>
+                    <input type="number" id="distanciaMetros" placeholder="Ex: 15" value="15">
+                </div>
+            </div>
 
-            document.getElementById('resCorrenteNbr').textContent = corrente.toFixed(2).replace('.', ',');
-            document.getElementById('resBitola').textContent = bitola;
-        }
+            <button class="btn-acao" id="btnCalcularAvancado">Calcular Parâmetros & NBR 5410</button>
+            
+            <div id="resultadoAvancado" class="resultado-box" style="display:none; margin-top:20px;"></div>
+        </div>
 
-        // Lógica da Enciclopédia de Comandos
-        function exibirDetalhesComando() {
-            const tipo = document.getElementById('selectComando').value;
-            const painel = document.getElementById('detalhesComando');
 
-            const dados = {
-                "direta": "<strong>Partida Direta:</strong> Acionamento simples aplicado a motores de pequeno porte. Utiliza contatores e relé térmico de proteção contra sobrecarga.",
-                "reversao": "<strong>Partida com Reversão:</strong> Emprega intertravamento mecânico e elétrico entre dois contatores para inverter o sentido de rotação do motor trifásico.",
-                "estrela-triangulo": "<strong>Partida Estrela-Triangulo:</strong> Utilizada para mitigar a corrente de partida em motores de indução de médio porte, fechando em estrela na partida e mudando para triângulo.",
-                "sensor-npn-pnp": "<strong>Sensores NPN vs PNP:</strong> Sensores NPN comutam o negativo (comum 0V na saída), enquanto sensores PNP comutam o positivo (+24V na carga)."
-            };
+        <!-- ================= FERRAMENTA 2: ENCICLOPÉDIA ================= -->
+        <div id="enciclopediaFerramenta" class="ferramenta-container">
+            <div class="ferramenta-header">
+                <h2><i class="fa-solid fa-book-atlas"></i> Enciclopédia & Automação</h2>
+                <button class="btn-fechar" onclick="fecharFerramentas()"><i class="fa-solid fa-xmark"></i> Fechar</button>
+            </div>
 
-            painel.innerHTML = dados[tipo] || "<p>Selecione um item acima para carregar a descrição e lógica de acionamento.</p>";
-        }
+            <div class="bloco-tecnico" style="border-left: 5px solid var(--accent);">
+                <h4><i class="fa-solid fa-language"></i> A "Sopa de Letrinhas" de Comandos</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+                    <div>
+                        <p><strong>A1 e A2 (Bobina):</strong> É o eletroímã. Recebe o sinal de comando (ex: 24VDC do CLP) para atracar.</p>
+                        <p style="margin-top: 8px;"><strong>L1, L2, L3 (Line):</strong> Entrada de potência principal. Fases vindas do disjuntor geral.</p>
+                        <p style="margin-top: 8px;"><strong>T1, T2, T3 (Terminal):</strong> Saída de potência. Vai direto para a carga pesada.</p>
+                    </div>
+                    <div>
+                        <p><strong>NA / NO (Normalmente Aberto):</strong> Terminação 3 e 4. Quando a bobina atinge tensão, ele fecha. (Selo, Luz verde).</p>
+                        <p style="margin-top: 8px;"><strong>NF / NC (Normalmente Fechado):</strong> Terminação 1 e 2. Quando a bobina atinge tensão, ele abre. (Intertravamento, Luz vermelha).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        // Lógica do Emissor de Orçamentos
-        function gerarOrcamento() {
-            const cliente = document.getElementById('clienteNome').value;
-            const valor = document.getElementById('valorServico').value;
 
-            if (!cliente || !valor) {
-                alert('Preencha o nome do cliente e o valor do serviço.');
-                return;
-            }
+        <!-- ================= FERRAMENTA 3: GUIA DE LIGAÇÕES VETORIAIS ================= -->
+        <div id="guiaFerramenta" class="ferramenta-container">
+            <div class="ferramenta-header">
+                <h2><i class="fa-solid fa-diagram-project"></i> Diagramas Vetoriais (Interativos)</h2>
+                <button class="btn-fechar" onclick="fecharFerramentas()"><i class="fa-solid fa-xmark"></i> Fechar</button>
+            </div>
 
-            document.getElementById('outCliente').textContent = cliente;
-            document.getElementById('outValor').textContent = parseFloat(valor).toLocaleString('pt-BR', {minimumFractionDigits: 2});
-            document.getElementById('resOrcamento').style.display = 'block';
-        }
-    </script>
+            <div class="bloco-tecnico" style="overflow-x: auto;">
+                <h4>Partida Direta de Motor Trifásico</h4>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">
+                    Diagrama de potência renderizando as suas próprias imagens. Os fios interligam os bornes principais.
+                </p>
+                
+                <svg width="600" height="600" xmlns="http://www.w3.org/2000/svg" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;">
+                    <text x="60" y="30" font-weight="bold" font-family="sans-serif">R</text>
+                    <text x="110" y="30" font-weight="bold" font-family="sans-serif">S</text>
+                    <text x="160" y="30" font-weight="bold" font-family="sans-serif">T</text>
+
+                    <path d="M 65 40 L 65 70" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M 115 40 L 115 70" stroke="#1e293b" stroke-width="4"/>
+                    <path d="M 165 40 L 165 70" stroke="#2563eb" stroke-width="4"/>
+
+                    <image href="./Disjuntor_trifasico.png" x="40" y="70" width="150" height="120" />
+
+                    <path d="M 65 190 L 65 240" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M 115 190 L 115 240" stroke="#1e293b" stroke-width="4"/>
+                    <path d="M 165 190 L 165 240" stroke="#2563eb" stroke-width="4"/>
+
+                    <image href="./Contatora.png" x="40" y="240" width="150" height="120" />
+
+                    <path d="M 65 360 L 65 410" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M 115 360 L 115 410" stroke="#1e293b" stroke-width="4"/>
+                    <path d="M 165 360 L 165 410" stroke="#2563eb" stroke-width="4"/>
+
+                    <image href="./Rele_sobrecarga.png" x="40" y="410" width="150" height="120" />
+
+                    <path d="M 65 530 L 65 560 L 300 560 L 300 520" fill="transparent" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M 115 530 L 115 550 L 340 550 L 340 520" fill="transparent" stroke="#1e293b" stroke-width="4"/>
+                    <path d="M 165 530 L 165 540 L 380 540 L 380 520" fill="transparent" stroke="#2563eb" stroke-width="4"/>
+
+                    <circle cx="340" cy="460" r="50" fill="#dcfce7" stroke="#166534" stroke-width="3"/>
+                    <text x="315" y="468" font-size="24" font-weight="bold" fill="#166534" font-family="sans-serif">M 3~</text>
+                </svg>
+            </div>
+        </div>
+
+
+        <!-- ================= FERRAMENTA 4: ORÇAMENTOS ================= -->
+        <div id="orcFerramenta" class="ferramenta-container">
+            <div class="ferramenta-header">
+                <h2><i class="fa-solid fa-file-invoice-dollar"></i> Emitir Novo Orçamento</h2>
+                <button class="btn-fechar" onclick="fecharFerramentas()"><i class="fa-solid fa-xmark"></i> Fechar</button>
+            </div>
+            
+            <form id="formOrcamento">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nome do Cliente / Empresa:</label>
+                        <input type="text" id="clienteNome" required placeholder="Nome completo">
+                    </div>
+                    <div class="form-group">
+                        <label>CPF ou CNPJ:</label>
+                        <input type="text" id="clienteDoc" placeholder="000.000.000-00">
+                    </div>
+                    <div class="form-group">
+                        <label>Endereço do Local:</label>
+                        <input type="text" id="clienteEnd" placeholder="Rua, Bairro, Cidade">
+                    </div>
+                </div>
+
+                <hr style="border:0; border-top:1px solid #e2e8f0; margin: 15px 0 20px 0;">
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Tipo de Serviço Principal:</label>
+                        <select id="servicoPrincipal" onchange="atualizarOpcoesServico()">
+                            <option value="eletrica">Elétrica</option>
+                            <option value="gerais">Serviços Gerais</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Especificação do Serviço:</label>
+                        <select id="servicoEspecifico" onchange="atualizarSugestaoPreco()">
+                        </select>
+                        <div id="alertaPreco" class="alerta-preco">
+                            <i class="fa-solid fa-circle-info"></i> Valor sugerido: <br>
+                            <strong id="valorSugeridoText">R$ 0,00 - R$ 0,00</strong> (un/m²)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Valor Total (R$):</label>
+                        <input type="number" step="0.01" id="valorTotal" required placeholder="0.00">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-acao" id="btnSalvar">Salvar Orçamento</button>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- SCRIPTS DE LÓGICA E DIMENSIONAMENTO AVANÇADO -->
+    <script>
+        function abrirFerramenta(idFerramenta) {
+            document.getElementById('painelMenu').style.display = 'none';
+            document.querySelectorAll('.ferramenta-container').forEach(f => f.style.display = 'none');
+            document.getElementById(idFerramenta).style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function fecharFerramentas() {
+            document.querySelectorAll('.ferramenta-container').forEach(f => f.style.display = 'none');
+            document.getElementById('painelMenu').style.display = 'grid';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function alternarCamposCalculadora() {
+            const tipo = document.getElementById('tipoUso').value;
+            document.querySelectorAll('.campo-geral').forEach(c => c.style.display = (tipo === 'geral') ? 'block' : 'none');
+            document.querySelectorAll('.campo-ar').forEach(c => c.style.display = (tipo === 'ar') ? 'block' : 'none');
+            document.querySelectorAll('.campo-casa').forEach(c => c.style.display = (tipo === 'casa') ? 'block' : 'none');
+        }
+
+        // TABELA NBR 5410 - Método de Instalação B1 (Eletroduto embutido em alvenaria), Cobre, Isolação PVC 70°C
+        const tabelaCabosNBR = [
+            { secao: 1.5, amp2: 17.5, amp3: 15.5 },
+            { secao: 2.5, amp2: 24,   amp3: 21 },
+            { secao: 4.0, amp2: 32,   amp3: 28 },
+            { secao: 6.0, amp2: 41,   amp3: 36 },
+            { secao: 10.0, amp2: 57,  amp3: 50 },
+            { secao: 16.0, amp2: 76,  amp3: 68 },
+            { secao: 25.0, amp2: 101, amp3: 89 },
+            { secao: 35.0, amp2: 125, amp3: 110 },
+            { secao: 50.0, amp2: 151, amp3: 134 },
+            { secao: 70.0, amp2: 192, amp3: 171 }
+        ];
+
+        const disjuntoresPadrao = [10, 16, 20, 25, 32, 40, 50, 63, 70, 80, 100, 125, 160];
+
+        // Função auxiliar para dimensionar 1 circuito terminal
+        function dimensionarCircuitoUnico(nome, potenciaW, tensaoV, distanciaM, rede) {
+            let ib = (rede === 'trifasico') ? (potenciaW / (Math.sqrt(3) * tensaoV)) : (potenciaW / tensaoV);
+            
+            // Disjuntor do circuito
+            let dj = disjuntoresPadrao[0];
+            for (let d of disjuntoresPadrao) {
+                if (d >= ib) { dj = d; break; }
+            }
+
+            // Ampacidade mínima
+            const col = (rede === 'trifasico') ? 'amp3' : 'amp2';
+            let caboAmp = tabelaCabosNBR[0];
+            for (let c of tabelaCabosNBR) {
+                if (c[col] >= dj) { caboAmp = c; break; }
+            }
+
+            // Queda de tensão (máx 4%)
+            const deltaV = tensaoV * 0.04;
+            const K = (rede === 'trifasico') ? Math.sqrt(3) : 2.0;
+            const secaoMinQueda = (K * distanciaM * ib) / (56 * deltaV);
+
+            let caboQueda = tabelaCabosNBR.find(c => c.secao >= secaoMinQueda) || tabelaCabosNBR[tabelaCabosNBR.length - 1];
+            
+            // Escolhe a maior bitola e respeita mínimo de norma (2.5mm² para força)
+            let caboFinal = (caboQueda.secao > caboAmp.secao) ? caboQueda : caboAmp;
+            if (caboFinal.secao < 2.5 && nome.toLowerCase().indexOf('iluminação') === -1) {
+                caboFinal = tabelaCabosNBR.find(c => c.secao >= 2.5);
+            }
+
+            let iz = caboFinal[col];
+            let qVolts = (K * distanciaM * ib) / (56 * caboFinal.secao);
+            let qPorcentagem = (qVolts / tensaoV) * 100;
+
+            return {
+                nome: nome,
+                potenciaW: potenciaW,
+                ib: ib,
+                disjuntor: dj,
+                caboSecao: caboFinal.secao,
+                ampacidadeIz: iz,
+                quedaPct: qPorcentagem
+            };
+        }
+
+        document.getElementById('btnCalcularAvancado').addEventListener('click', function() {
+            const tipo = document.getElementById('tipoUso').value;
+            const rede = document.getElementById('tipoRede').value;
+            const tensao = parseFloat(document.getElementById('tensaoVolts').value) || 220;
+            const distancia = parseFloat(document.getElementById('distanciaMetros').value) || 10;
+            const resDiv = document.getElementById('resultadoAvancado');
+            resDiv.style.display = 'block';
+
+            if (tipo === 'casa') {
+                const qChuveiros = parseInt(document.getElementById('qtdChuveiros').value) || 0;
+                const pChuveiro = parseFloat(document.getElementById('potChuveiroW').value) || 7500;
+                
+                const qAres = parseInt(document.getElementById('qtdAres').value) || 0;
+                const pAr = parseFloat(document.getElementById('potArW').value) || 1200;
+                
+                const wTugs = parseFloat(document.getElementById('wattsTugs').value) || 0;
+
+                const potTotalInstalada = (qChuveiros * pChuveiro) + (qAres * pAr) + wTugs;
+
+                // Fator de demanda NBR 5410
+                let fd = 0.60;
+                if (potTotalInstalada > 10000) fd = 0.55;
+                if (potTotalInstalada > 20000) fd = 0.45;
+
+                const potDemanda = potTotalInstalada * fd;
+                const ibGeral = (rede === 'trifasico') ? (potDemanda / (Math.sqrt(3) * tensao)) : (potDemanda / tensao);
+
+                // Disjuntor Geral
+                let djGeral = disjuntoresPadrao[0];
+                for (let d of disjuntoresPadrao) {
+                    if (d >= ibGeral) { djGeral = d; break; }
+                }
+
+                // Cabo do Ramal Geral
+                const col = (rede === 'trifasico') ? 'amp3' : 'amp2';
+                let caboGeral = tabelaCabosNBR.find(c => c[col] >= djGeral) || tabelaCabosNBR[tabelaCabosNBR.length - 1];
+
+                // Mapeamento de Circuitos Individuais (TUEs)
+                let listaCircuitos = [];
+                
+                for(let i=1; i<=qChuveiros; i++) {
+                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Chuveiro ${i}`, pChuveiro, tensao, distancia, rede));
+                }
+                for(let i=1; i<=qAres; i++) {
+                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Ar Condicionado ${i}`, pAr, tensao, distancia, rede));
+                }
+                if (wTugs > 0) {
+                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Geral (Iluminação e Tomadas)`, wTugs, tensao, distancia, rede));
+                }
+
+                const totalDisjuntores = listaCircuitos.length + 1; // Circuitos + 1 Geral
+
+                let htmlCircuitos = "";
+                listaCircuitos.forEach((c, idx) => {
+                    htmlCircuitos += `
+                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                            <td style="padding: 8px;"><strong>C${idx+1}:</strong> ${c.nome}</td>
+                            <td style="padding: 8px;">${c.potenciaW} W</td>
+                            <td style="padding: 8px;">${c.ib.toFixed(1)} A</td>
+                            <td style="padding: 8px; color: #2563eb; font-weight:bold;">${c.disjuntor} A</td>
+                            <td style="padding: 8px; color: #166534; font-weight:bold;">${c.caboSecao} mm²</td>
+                            <td style="padding: 8px;">${c.quedaPct.toFixed(1)}%</td>
+                        </tr>
+                    `;
+                });
+
+                resDiv.innerHTML = `
+                    <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 18px; border-radius: 8px;">
+                        <h3 style="color: #0b132b; margin-bottom: 12px;"><i class="fa-solid fa-house-bolt"></i> Dimensionamento de Entrada Residencial & Quadro</h3>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; background: #ffffff; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
+                            <div><strong>Potência Instalada:</strong> ${(potTotalInstalada/1000).toFixed(2)} kW</div>
+                            <div><strong>Potência Calculada (Demanda):</strong> ${(potDemanda/1000).toFixed(2)} kW</div>
+                            <div><strong>Fator de Demanda:</strong> ${(fd*100).toFixed(0)}%</div>
+                            <div><strong>Corrente de Entrada (Ib Geral):</strong> <span style="color:#d97706; font-weight:bold;">${ibGeral.toFixed(1)} A</span></div>
+                            <div><strong>Disjuntor Geral (QDF):</strong> <span style="color:#2563eb; font-weight:bold;">${djGeral} A</span></div>
+                            <div><strong>Cabo de Entrada (Alimentador):</strong> <span style="color:#166534; font-weight:bold;">${caboGeral.secao} mm²</span></div>
+                        </div>
+
+                        <h4 style="color: #1e293b; margin-top: 15px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-list-check"></i> Detalhamento do Quadro de Distribuição (Total: ${totalDisjuntores} Disjuntores)
+                        </h4>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 10px;">
+                            * Requisito NBR 5410: Chuveiros e Ar Condicionados devem possuir disjuntor e cabo exclusivos (Circuito TUE).
+                        </p>
+
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.9rem; background: white; border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1;">
+                                <thead style="background: #0b132b; color: white;">
+                                    <tr>
+                                        <th style="padding: 8px;">Circuito</th>
+                                        <th style="padding: 8px;">Potência</th>
+                                        <th style="padding: 8px;">Corrente (Ib)</th>
+                                        <th style="padding: 8px;">Disjuntor</th>
+                                        <th style="padding: 8px;">Cabo Rec.</th>
+                                        <th style="padding: 8px;">Queda (ΔV)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${htmlCircuitos}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- TABELA GUIA DE AMPACIDADE E DISTÂNCIA -->
+                        <div style="margin-top: 20px; padding: 15px; background: #ffffff; border-radius: 8px; border: 1px solid #cbd5e1;">
+                            <h4 style="color:#0b132b; margin-bottom:10px;"><i class="fa-solid fa-table"></i> Guia Rápido de Cabos e Ampacidade (NBR 5410 em 220V)</h4>
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: center;">
+                                    <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                                        <th style="padding: 6px;">Bitola (mm²)</th>
+                                        <th style="padding: 6px;">Suporta até (A)</th>
+                                        <th style="padding: 6px;">Potência Máx (220V Monof/Bif)</th>
+                                        <th style="padding: 6px;">Disjuntor Indicado</th>
+                                        <th style="padding: 6px;">Distância Máx p/ 4% ΔV</th>
+                                    </tr>
+                                    <tr><td>1.5 mm²</td><td>17.5 A</td><td>~3.800 W</td><td>10A - 16A</td><td>~ 18 metros</td></tr>
+                                    <tr><td>2.5 mm²</td><td>24.0 A</td><td>~5.200 W</td><td>20A</td><td>~ 22 metros</td></tr>
+                                    <tr><td>4.0 mm²</td><td>32.0 A</td><td>~7.000 W</td><td>25A - 32A</td><td>~ 26 metros</td></tr>
+                                    <tr><td>6.0 mm²</td><td>41.0 A</td><td>~9.000 W</td><td>40A</td><td>~ 31 metros</td></tr>
+                                    <tr><td>10.0 mm²</td><td>57.0 A</td><td>~12.500 W</td><td>50A - 63A</td><td>~ 40 metros</td></tr>
+                                    <tr><td>16.0 mm²</td><td>76.0 A</td><td>~16.700 W</td><td>70A - 80A</td><td>~ 52 metros</td></tr>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+            } else {
+                // MODO EQUIPAMENTO ÚNICO OU AR CONDICIONADO ISOLADO
+                let potenciaInstalada = (tipo === 'ar') ? (parseFloat(document.getElementById('inputBtus').value)||0)/10 : (parseFloat(document.getElementById('potenciaWatts').value)||0);
+                
+                let resCircuito = dimensionarCircuitoUnico("Equipamento / Circuito", potenciaInstalada, tensao, distancia, rede);
+
+                const iSemDisparo = (resCircuito.disjuntor * 1.13).toFixed(1);
+                const iComDisparo1h = (resCircuito.disjuntor * 1.45).toFixed(1);
+                const iCurto = (resCircuito.disjuntor * 5.0).toFixed(0);
+
+                resDiv.innerHTML = `
+                    <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 18px; border-radius: 8px;">
+                        <h3 style="color: #0b132b; margin-bottom: 10px;"><i class="fa-solid fa-file-contract"></i> Relatório de Circuito Único</h3>
+                        • <strong>Corrente Nominal (Ib):</strong> <span style="color:#d97706; font-weight:bold;">${resCircuito.ib.toFixed(1)} A</span><br>
+                        • <strong>Disjuntor Sugerido (In):</strong> <span style="color:#2563eb; font-weight:bold;">${resCircuito.disjuntor} A</span> (Termomagnético Curva C)<br>
+                        • <strong>Cabo Recomendado:</strong> <span style="color:#166534; font-weight:bold;">${resCircuito.caboSecao} mm²</span> (Distância: ${distancia}m)<br>
+                        • <strong>Ampacidade do Cabo (Iz):</strong> Suporta até ${resCircuito.ampacidadeIz} A em eletroduto<br>
+                        • <strong>Queda de Tensão (ΔV):</strong> ${resCircuito.quedaPct.toFixed(2)}% ${resCircuito.quedaPct > 4 ? '<span style="color:red;">⚠️ Excede 4%! Bitola aumentada para compensar a distância.</span>' : '<span style="color:green;">✓ Dentro do limite NBR 5410 (&le;4%)</span>'}<br>
+
+                        <hr style="margin: 15px 0; border:0; border-top:1px solid #e2e8f0;">
+
+                        <h4 style="color:#1e293b;"><i class="fa-solid fa-clock-rotate-left"></i> Tempo de Atuação do Disjuntor (${resCircuito.disjuntor}A Curva C)</h4>
+                        <p style="font-size: 0.88rem; color: #475569; margin-top:5px;">
+                            • <strong>Carga Contínua (Até ${iSemDisparo} A):</strong> O disjuntor opera indefinidamente sem armar/disparar.<br>
+                            • <strong>Sobrecarga Térmica (${iSemDisparo} A a ${iComDisparo1h} A):</strong> Aquecimento gradual do bimetálico. Disparo em <u>até 1 hora</u>.<br>
+                            • <strong>Curto-Circuito (Acima de ${iCurto} A):</strong> Atuação magnética ultrarrápida em <u>menos de 0.1 segundo</u>.
+                        </p>
+                    </div>
+                `;
+            }
+        });
+
+        const tabelaPrecos = {
+            "Instalação de Chuveiro": { min: 80.00, max: 150.00 },
+            "Instalação de Tomadas / Fotocélulas": { min: 35.00, max: 80.00 },
+            "Interruptores (Ponto)": { min: 35.00, max: 70.00 },
+            "Instalação de Quadro de Distribuição": { min: 350.00, max: 900.00 },
+            "Montagem de Painel de Comandos": { min: 500.00, max: 2500.00 },
+            "Manutenção Preventiva Geral": { min: 150.00, max: 400.00 },
+        };
+
+        function atualizarOpcoesServico() {
+            const principal = document.getElementById('servicoPrincipal').value;
+            const especifica = document.getElementById('servicoEspecifico');
+            especifica.innerHTML = '';
+
+            let opcoes = (principal === 'eletrica') ? [
+                "Instalação de Chuveiro",
+                "Instalação de Tomadas / Fotocélulas",
+                "Interruptores (Ponto)",
+                "Instalação de Quadro de Distribuição",
+                "Montagem de Painel de Comandos"
+            ] : ["Manutenção Preventiva Geral"];
+
+            opcoes.forEach(opt => {
+                let el = document.createElement('option');
+                el.value = opt;
+                el.textContent = opt;
+                especifica.appendChild(el);
+            });
+
+            atualizarSugestaoPreco();
+        }
+
+        function atualizarSugestaoPreco() {
+            const servicoSelecionado = document.getElementById('servicoEspecifico').value;
+            const alertaBox = document.getElementById('alertaPreco');
+            const valorText = document.getElementById('valorSugeridoText');
+
+            if(tabelaPrecos[servicoSelecionado]) {
+                const min = tabelaPrecos[servicoSelecionado].min.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                const max = tabelaPrecos[servicoSelecionado].max.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                valorText.innerHTML = `${min} até ${max}`;
+                alertaBox.style.display = 'block';
+            } else {
+                alertaBox.style.display = 'none';
+            }
+        }
+
+        window.onload = function() {
+            atualizarOpcoesServico();
+            alternarCamposCalculadora();
+        };
+    </script>
 </body>
 </html>
