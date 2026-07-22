@@ -3,126 +3,142 @@ function carregarEnciclopediaTecnica() {
     if (!container) return;
 
     container.innerHTML = `
-        <!-- SEÇÃO 1: GUIA DE CABOS E POTÊNCIAS (COM MARGEM DE SEGURANÇA) -->
+        <!-- SEÇÃO 1: COMO FUNCIONAM OS DISJUNTORES E SUAS MARCAÇÕES -->
         <div class="bloco-tecnico" style="background: white; border: 1px solid #cbd5e1; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h3 style="color: #0b132b; margin-bottom: 10px;"><i class="fa-solid fa-table-cells"></i> Tabela Prática de Cabos, Ampacidade & Margem de Segurança</h3>
-            <p style="font-size: 0.9rem; color: #475569; margin-bottom: 15px;">
-                Conforme a NBR 5410, os condutores devem possuir capacidade de condução de corrente (Iz) superior à corrente do circuito (Ib) e inferior à proteção do disjuntor (In). A tabela abaixo considera uma <strong>margem de segurança operacional</strong> para cabos em eletrodutos embutidos (Método B1), exibindo a capacidade máxima de corrente e potências limites aproximadas em 127V e 220V:
+            <h3 style="color: #0b132b; margin-bottom: 10px;"><i class="fa-solid fa-car-battery"></i> O Funcionamento e as Marcações dos Disjuntores (Termomagnéticos)</h3>
+            <p style="font-size: 0.9rem; color: #475569; margin-bottom: 12px;">
+                O disjuntor não é apenas um "interruptor automático". Ele possui dois mecanismos internos de proteção distintos:
             </p>
-            
-            <div style="overflow-x: auto;">
-                <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.88rem; background: white; border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1;">
-                    <thead style="background: #0b132b; color: white;">
-                        <tr>
-                            <th style="padding: 10px;">Bitola (mm²)</th>
-                            <th style="padding: 10px;">Corrente Máx (Iz)*</th>
-                            <th style="padding: 10px;">Potência Máx (127V)</th>
-                            <th style="padding: 10px;">Potência Máx (220V)</th>
-                            <th style="padding: 10px;">Uso Típico Recomendado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr style="border-bottom: 1px solid #e2e8f0;">
-                            <td style="padding: 9px; font-weight:bold; color:#166534;">1.5 mm²</td>
-                            <td style="padding: 9px;">15.5 A</td>
-                            <td style="padding: 9px;">~1.9 kW</td>
-                            <td style="padding: 9px;">~3.4 kW</td>
-                            <td style="padding: 9px;">Circuitos de Iluminação exclusivos.</td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid #e2e8f0;">
-                            <td style="padding: 9px; font-weight:bold; color:#166534;">2.5 mm²</td>
-                            <td style="padding: 9px;">21.0 A</td>
-                            <td style="padding: 9px;">~2.6 kW</td>
-                            <td style="padding: 9px;">~4.6 kW</td>
-                            <td style="padding: 9px;">Tomadas Gerais (TUGs), Geladeira, Micro-ondas.</td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid #e2e8f0;">
-                            <td style="padding: 9px; font-weight:bold; color:#166534;">4.0 mm²</td>
-                            <td style="padding: 9px;">28.0 A</td>
-                            <td style="padding: 9px;">~3.5 kW</td>
-                            <td style="padding: 9px;">~6.1 kW</td>
-                            <td style="padding: 9px;">Tomadas de Uso Específico (TUE), Torneiras elétricas menores.</td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid #e2e8f0;">
-                            <td style="padding: 9px; font-weight:bold; color:#166534;">6.0 mm²</td>
-                            <td style="padding: 9px;">36.0 A</td>
-                            <td style="padding: 9px;">~4.5 kW</td>
-                            <td style="padding: 9px;">~7.9 kW</td>
-                            <td style="padding: 9px;">Chuveiros, Fornos embutidos, Ar-condicionado potente.</td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid #e2e8f0;">
-                            <td style="padding: 9px; font-weight:bold; color:#166534;">10.0 mm²</td>
-                            <td style="padding: 9px;">50.0 A</td>
-                            <td style="padding: 9px;">-</td>
-                            <td style="padding: 9px;">~11.0 kW</td>
-                            <td style="padding: 9px;">Alimentadores principais de subquadros / Residências pequenas.</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 9px; font-weight:bold; color:#166534;">16.0 mm²</td>
-                            <td style="padding: 9px;">68.0 A</td>
-                            <td style="padding: 9px;">-</td>
-                            <td style="padding: 9px;">~14.9 kW</td>
-                            <td style="padding: 9px;">Entradas e alimentadores principais de residências médias.</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <h5 style="color: #1e293b; margin-bottom: 4px;"><i class="fa-solid fa-fire"></i> Disparo Térmico (Sobrecarga Lenta)</h5>
+                    <p style="font-size: 0.85rem; color: #334155;">Feito por uma <strong>lâmina bimetálica</strong>. Se passarmos uma corrente um pouco acima do limite por muito tempo (ex: ligar muitos aparelhos juntos), a lâmina aquece, entorta e desliga o circuito. Protege o <em>cabo</em> contra derretimento.</p>
+                </div>
+                <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <h5 style="color: #1e293b; margin-bottom: 4px;"><i class="fa-solid fa-bolt"></i> Disparo Magnético (Curto-Circuito Instantâneo)</h5>
+                    <p style="font-size: 0.85rem; color: #334155;">Feito por uma <strong>bobina eletromagnética</strong>. Em caso de curto-circuito franco, a corrente dispara violentamente gerando um campo magnético instantâneo que puxa um pino e desliga em frações de milissegundo.</p>
+                </div>
             </div>
-            <p style="font-size: 0.8rem; color: #64748b; margin-top: 8px;">*Valores com margem baseada nas condições padrão de agrupamento de circuitos da NBR 5410.</p>
+
+            <h4 style="color: #0b132b; margin-top: 15px; margin-bottom: 8px;">Entendendo as Marcações no Corpo do Disjuntor:</h4>
+            <ul style="font-size: 0.9rem; color: #334155; padding-left: 20px; line-height: 1.6;">
+                <li><strong>In (Corrente Nominal):</strong> O número impresso seguido de 'A' (ex: <span style="color:#2563eb; font-weight:bold;">C25</span> significa Curva C, 25 Ampères). É a corrente máxima que ele suporta conduzir continuamente sem disparar.</li>
+                <li><strong>A Curva (B, C ou D):</strong> Determina a tolerância ao pico de corrente de partida (inércia):
+                    <ul style="margin-top: 4px; padding-left: 20px;">
+                        <li><strong>Curva B (3 a 5 x In):</strong> Dispara rápido. Para cargas resistivas (chuveiro, ferro de passar, lâmpadas). Dispararia com o tranco de um motor.</li>
+                        <li><strong>Curva C (5 a 10 x In):</strong> Padrão residencial/comercial. Tolera o tranco de motores médios (bombas, geladeiras, ar-condicionado).</li>
+                        <li><strong>Curva D (10 a 20 x In):</strong> Industrial pesada. Tolera picos monstruosos de transformadores e grandes motores.</li>
+                    </ul>
+                </li>
+                <li><strong>Capacidade de Interrupção (Ex: 4500 ou kA):</strong> O quadrado com um número (ex: <code>4500</code> ou <code>3kA</code>). Indica a máxima corrente de curto que o disjuntor consegue extinguir sem explodir na sua mão.</li>
+            </ul>
         </div>
 
-        <!-- SEÇÃO 2: TIPOS DE DISJUNTORES E CURVAS -->
+        <!-- SEÇÃO 2: GUIA DE TENSÕES E 380V -->
         <div class="bloco-tecnico" style="background: white; border: 1px solid #cbd5e1; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h3 style="color: #0b132b; margin-bottom: 10px;"><i class="fa-solid fa-car-battery"></i> Tipos de Disjuntores e suas Curvas de Disparo</h3>
+            <h3 style="color: #0b132b; margin-bottom: 10px;"><i class="fa-solid fa-network-wired"></i> Entendendo Redes: 127V, 220V e 380V (Fase, Neutro e Terra)</h3>
             <p style="font-size: 0.9rem; color: #475569; margin-bottom: 12px;">
-                O disjuntor protege a instalação contra curtos-circuitos e sobrecargas. A "Curva" define a sensibilidade ao pico de corrente no momento da partida de motores e equipamentos indutivos:
+                A forma como a energia chega ao quadro muda completamente o dimensionamento e as proteções:
             </p>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px;">
                 <div style="background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                    <h4 style="color: #2563eb; margin-bottom: 6px;">Curva B (3 a 5 x In)</h4>
-                    <p style="font-size: 0.88rem; color: #334155;">Disparo rápido em caso de sobrecorrentes leves. Ideal para cargas puramente resistivas (chuveiros, lâmpadas incandescentes, aquecedores e tomadas comuns residenciais).</p>
+                    <h4 style="color: #2563eb; margin-bottom: 6px;">Monofásico / Bifásico (127V / 220V)</h4>
+                    <p style="font-size: 0.88rem; color: #334155;">Derivado de transformadores abaixadores de distribuição urbana. 
+                    <br>• <strong>Fase + Neutro =</strong> 127V
+                    <br>• <strong>Fase + Fase =</strong> 220V (em redes bifásicas a 127/220V)</p>
                 </div>
                 <div style="background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                    <h4 style="color: #166534; margin-bottom: 6px;">Curva C (5 a 10 x In)</h4>
-                    <p style="font-size: 0.88rem; color: #334155;"><strong>O mais utilizado em residências e indústrias leves.</strong> Tolera picos de corrente moderados no momento de ligar motores (bombas, geladeiras, ar-condicionado inverter e ferramentas elétricas).</p>
-                </div>
-                <div style="background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                    <h4 style="color: #d97706; margin-bottom: 6px;">Curva D (10 a 20 x In)</h4>
-                    <p style="font-size: 0.88rem; color: #334155;">Altamente tolerante a picos de partida. Destinado a cargas altamente indutivas, como grandes transformadores, máquinas de solda e motores industriais pesados.</p>
+                    <h4 style="color: #166534; margin-bottom: 6px;">Trifásico 380V / 220V (Estrela / Y)</h4>
+                    <p style="font-size: 0.88rem; color: #334155;">Muito comum em indústrias e prédios comerciais. Possui 3 Fases vivas (L1, L2, L3) + Neutro central + Terra.
+                    <br>• <strong>Entre qualquer Fase e o Neutro =</strong> 220V
+                    <br>• <strong>Entre Fase e Fase (L1 a L2) =</strong> 380V (usado para motores industriais potentes)</p>
                 </div>
             </div>
         </div>
 
-        <!-- SEÇÃO 3: DPS E IDR / DR -->
-        <div class="bloco-tecnico" style="background: white; border: 1px solid #cbd5e1; padding: 20px; border-radius: 8px;">
-            <h3 style="color: #0b132b; margin-bottom: 10px;"><i class="fa-solid fa-shield-halved"></i> Proteção Diferencial (IDR/DR) e Surtos (DPS)</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div style="background: #eff6ff; padding: 15px; border-radius: 6px; border: 1px solid #bfdbfe;">
-                    <h4 style="color: #1e40af; margin-bottom: 8px;"><i class="fa-solid fa-user-shield"></i> IDR / DR (Dispositivo Diferencial Residual)</h4>
-                    <p style="font-size: 0.88rem; color: #1e3a8a; margin-bottom: 8px;"><strong>O que faz:</strong> Protege contra choques elétricos letais por contato direto ou indireto, monitorando a fuga de corrente para a terra.</p>
-                    <p style="font-size: 0.88rem; color: #1e3a8a;"><strong>Onde e quando usar:</strong> Obrigatório pela NBR 5410 em áreas molhadas ou externas (banheiros, cozinhas, lavanderias e tomadas externas). Sensibilidade padrão: 30mA para proteção de pessoas.</p>
+        <!-- SEÇÃO 3: GUIA INTERATIVO DE LIGAÇÕES PRÁTICAS -->
+        <div class="bloco-tecnico" style="background: white; border: 1px solid #cbd5e1; padding: 20px; border-radius: 8px; border-left: 5px solid #166534;">
+            <h3 style="color: #0b132b; margin-bottom: 10px;"><i class="fa-solid fa-screwdriver-wrench"></i> Guia Interativo de Montagem & Bornes de Comando</h3>
+            <p style="font-size: 0.9rem; color: #475569; margin-bottom: 15px;">
+                Selecione abaixo o que você deseja montar para ver o diagrama exato de onde ligar cada fio e borne:
+            </p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label style="font-size:0.85rem; font-weight:bold;">Tensão do Sistema:</label>
+                    <select id="guiaTensao" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; margin-top:4px;">
+                        <option value="220">220V (Fase + Fase ou Fase + Neutro)</option>
+                        <option value="380">380V (Trifásico - Fase + Fase)</option>
+                        <option value="24v">24V DC (Comando Eletrônico / CLP)</option>
+                    </select>
                 </div>
-                <div style="background: #fef2f2; padding: 15px; border-radius: 6px; border: 1px solid #fecaca;">
-                    <h4 style="color: #991b1b; margin-bottom: 8px;"><i class="fa-solid fa-bolt-lightning"></i> DPS (Dispositivo de Proteção contra Surtos)</h4>
-                    <p style="font-size: 0.88rem; color: #7f1d1d; margin-bottom: 8px;"><strong>O que faz:</strong> Desvia para o aterramento os surtos de tensão transitórios causados por descargas atmosféricas (raios) na rede elétrica ou manobras da concessionária.</p>
-                    <p style="font-size: 0.88rem; color: #7f1d1d;"><strong>Onde e quando usar:</strong> Obrigatório no Quadro de Distribuição Principal (QDF) de edificações alimentadas por rede aérea ou regiões com incidência de raios.</p>
+                <div>
+                    <label style="font-size:0.85rem; font-weight:bold;">Aplicação Desejada:</label>
+                    <select id="guiaAplicacao" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; margin-top:4px;" onchange="renderizarGuiaPratico()">
+                        <option value="partida_direta">Partida Direta de Motor Trifásico (Contatora + Botoeira)</option>
+                        <option value="idr_instalacao">Instalação de IDR / DR Residencial</option>
+                        <option value="tomada_chuveiro">Ligação de Chuveiro / Carga Resistiva</option>
+                    </select>
                 </div>
             </div>
-        </div>
 
-        <!-- SEÇÃO 4: SOPA DE LETRINHAS DE COMANDOS -->
-        <div class="bloco-tecnico" style="background: white; border: 1px solid #cbd5e1; padding: 20px; border-radius: 8px; margin-top: 20px; border-left: 5px solid var(--accent);">
-            <h4 style="color: #0b132b; margin-bottom: 10px;"><i class="fa-solid fa-language"></i> A "Sopa de Letrinhas" de Comandos Elétricos</h4>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; font-size: 0.9rem;">
-                <div>
-                    <p><strong>A1 e A2 (Bobina):</strong> Eletroímã do contator. Recebe o sinal de comando (ex: 24VDC ou 220V) para atracar.</p>
-                    <p style="margin-top: 8px;"><strong>L1, L2, L3 (Line):</strong> Entrada de potência principal (fases da rede).</p>
-                    <p style="margin-top: 8px;"><strong>T1, T2, T3 (Terminal):</strong> Saída de potência que vai direto para a carga pesada (motor).</p>
-                </div>
-                <div>
-                    <p><strong>NA / NO (Normalmente Aberto):</strong> Terminais 3 e 4. Fecham o contato quando a bobina é energizada (usado em selo e sinaleiros verdes).</p>
-                    <p style="margin-top: 8px;"><strong>NF / NC (Normalmente Fechado):</strong> Terminais 1 e 2. Abrem o contato quando a bobina é energizada (usado em intertravamento e sinaleiros vermelhos).</p>
-                </div>
+            <div id="resultadoGuiaPratico" style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 6px;">
+                <!-- Injetado dinamicamente -->
             </div>
         </div>
     `;
+
+    renderizarGuiaPratico();
+    document.getElementById('guiaAplicacao').addEventListener('change', renderizarGuiaPratico);
+    document.getElementById('guiaTensao').addEventListener('change', renderizarGuiaPratico);
+}
+
+function renderizarGuiaPratico() {
+    const app = document.getElementById('guiaAplicacao').value;
+    const tensao = document.getElementById('guiaTensao').value;
+    const resDiv = document.getElementById('resultadoGuiaPratico');
+    if (!resDiv) return;
+
+    if (app === 'partida_direta') {
+        resDiv.innerHTML = `
+            <h4 style="color: #1e293b; margin-bottom: 8px;"><i class="fa-solid fa-gears"></i> Esquema de Ligações: Partida Direta (${tensao === '380' ? '380V Trifásico' : '220V'})</h4>
+            <div style="font-size: 0.88rem; color: #334155; line-height: 1.6;">
+                <p><strong>1. Circuito de Potência (Força):</strong></p>
+                <ul style="padding-left: 20px; margin-bottom: 10px;">
+                    <li>Ligue as Fases da rede (R, S, T) nos bornes superiores do Disjuntor Geral/Motor.</li>
+                    <li>Saia do disjuntor e ligue nos bornes de entrada da Contatora principais: <strong>L1, L2 e L3</strong>.</li>
+                    <li>Saia da contatora pelos bornes inferiores de potência: <strong>T1, T2 e T3</strong>.</li>
+                    <li>Ligue esses cabos direto nos bornes de entrada do <strong>Relé de Sobrecarga</strong> (geralmente se acopla direto na contatora).</li>
+                    <li>Saia do Relé de Sobrecarga (terminais 2T1, 4T2, 6T3) e leve os cabos até o motor fechado em ${tensao}V.</li>
+                </ul>
+
+                <p><strong>2. Circuito de Comando (Acionamento):</strong></p>
+                <ul style="padding-left: 20px;">
+                    <li>Puxe uma Fase (ou 24V+) para alimentar a <strong>Botoeira Desliga (NF - Terminais 1 e 2)</strong>.</li>
+                    <li>Saia do borne 2 da botoeira desliga e ligue na <strong>Botoeira Liga (NA - Terminais 3 e 4)</strong>.</li>
+                    <li>Faça o <strong>Selo</strong>: Puxe um fio do borne de saída da botoeira liga e ligue no contato auxiliar <strong>13 e 14 (NO)</strong> da própria contatora.</li>
+                    <li>Ligue o sinal final na entrada da bobina da contatora: <strong>A1</strong>.</li>
+                    <li>Feche o circuito da bobina ligando o borne <strong>A2</strong> no Neutro (ou na segunda Fase / 0V).</li>
+                </ul>
+            </div>
+        `;
+    } else if (app === 'idr_instalacao') {
+        resDiv.innerHTML = `
+            <h4 style="color: #1e293b; margin-bottom: 8px;"><i class="fa-solid fa-shield-halved"></i> Como Instalar o IDR / DR Corretamente</h4>
+            <div style="font-size: 0.88rem; color: #334155; line-height: 1.6;">
+                <p>• <strong>Alimentação Superior (Entrada):</strong> Os cabos que vêm do disjuntor geral entram nos bornes superiores do IDR (Fases à esquerda e o <strong>Neutro</strong> obrigatoriamente no borne identificado com a letra <strong>N</strong>).</p>
+                <p>• <strong>Saída Inferior:</strong> Sai do IDR por baixo e alimenta os disjuntores parciais dos circuitos protegidos.</p>
+                <p style="color: #dc2626; margin-top: 6px;">⚠️ <strong>Regra de Ouro:</strong> Nunca misture ou aterre o Neutro após a saída do IDR. O IDR mede a corrente que vai e que volta pelo Neutro; se houver fuga para o terra ou toque humano, a corrente de retorno diminui e ele dispara na hora!</p>
+            </div>
+        `;
+    } else {
+        resDiv.innerHTML = `
+            <h4 style="color: #1e293b; margin-bottom: 8px;"><i class="fa-solid fa-bolt"></i> Ligação de Cargas Resistivas (Chuveiro / Torneira)</h4>
+            <div style="font-size: 0.88rem; color: #334155; line-height: 1.6;">
+                <p>• Para redes em <strong>220V</strong>, utilize um disjuntor Bipolar dedicado com cabo de <strong>6.0 mm²</strong>.</p>
+                <p>• Conecte os dois cabos de fase do aparelho diretamente nos terminais de saída do disjuntor e do neutro/terra conforme o manual.</p>
+                <p style="color: #166534; font-weight: bold; margin-top: 6px;">✓ O fio de Proteção (Terra - cor verde ou verde-amarelo) deve ser ligado obrigatoriamente ao borne de aterramento do chuveiro para evitar qualquer risco de choque.</p>
+            </div>
+        `;
+    }
 }
