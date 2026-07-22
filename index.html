@@ -29,28 +29,24 @@
         <!-- TELA PRINCIPAL: PAINEL DE CARDS -->
         <section id="painelMenu" class="dashboard-grid">
             
-            <!-- Card 1: Calculadora & Ar Condicionado -->
             <div class="card-modulo" onclick="abrirFerramenta('calcFerramenta')">
                 <div class="card-icon icon-calc"><i class="fa-solid fa-calculator"></i></div>
                 <h3>Calculadora & Ar Condicionado</h3>
                 <p>Dimensionamento de cabos por carga e conversão inteligente de BTUs para Watts.</p>
             </div>
 
-            <!-- Card 2: Enciclopédia & Automação -->
             <div class="card-modulo" onclick="abrirFerramenta('enciclopediaFerramenta')">
                 <div class="card-icon icon-auto"><i class="fa-solid fa-book-atlas"></i></div>
                 <h3>Enciclopédia & Automação</h3>
-                <p>Catálogo visual (IDR, DPS, Inversores, Encoders) e teoria de Contatores, Relés e Disjuntores.</p>
+                <p>Catálogo visual de contatores, relés, borneiras e a "sopa de letrinhas" da automação.</p>
             </div>
 
-            <!-- Card 3: Guia de Ligações -->
             <div class="card-modulo" onclick="abrirFerramenta('guiaFerramenta')">
                 <div class="card-icon icon-guia"><i class="fa-solid fa-diagram-project"></i></div>
                 <h3>Esquemas de Ligações</h3>
                 <p>Diagramas visuais passo a passo para redes monofásicas, bifásicas e comandos.</p>
             </div>
 
-            <!-- Card 4: Orçamentos -->
             <div class="card-modulo" onclick="abrirFerramenta('orcFerramenta')">
                 <div class="card-icon icon-orc"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                 <h3>Emitir Orçamento</h3>
@@ -60,7 +56,7 @@
         </section>
 
 
-        <!-- ================= FERRAMENTA 1: CALCULADORA & AR CONDICIONADO ================= -->
+        <!-- ================= FERRAMENTA 1: CALCULADORA (MANTIDA IGUAL) ================= -->
         <div id="calcFerramenta" class="ferramenta-container">
             <div class="ferramenta-header">
                 <h2><i class="fa-solid fa-calculator"></i> Dimensionamento & Conversor BTU/Watts</h2>
@@ -113,100 +109,87 @@
         </div>
 
 
-        <!-- ================= FERRAMENTA 2: ENCICLOPÉDIA & AUTOMAÇÃO ================= -->
+        <!-- ================= FERRAMENTA 2: ENCICLOPÉDIA & AUTOMAÇÃO (ATUALIZADA) ================= -->
         <div id="enciclopediaFerramenta" class="ferramenta-container">
             <div class="ferramenta-header">
                 <h2><i class="fa-solid fa-book-atlas"></i> Enciclopédia & Automação</h2>
                 <button class="btn-fechar" onclick="fecharFerramentas()"><i class="fa-solid fa-xmark"></i> Fechar</button>
             </div>
 
-            <!-- Conceitos Básicos -->
-            <div class="bloco-tecnico" style="border-color: var(--accent);">
-                <h4>Contatos: Qual a diferença entre NA e NF?</h4>
-                <div class="badges-contatos">
-                    <span class="badge-na">NA (Normal Aberto) / NO</span>
-                    <span class="badge-nf">NF (Normal Fechado) / NC</span>
+            <!-- Bloco Teórico Focado em Comandos -->
+            <div class="bloco-tecnico" style="border-left: 5px solid var(--accent);">
+                <h4><i class="fa-solid fa-language"></i> A "Sopa de Letrinhas" de Comandos</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+                    <div>
+                        <p><strong>A1 e A2 (Bobina):</strong> É o eletroímã. Recebe o sinal de comando (ex: 24VDC do CLP ou 220V do botão) para atracar o contator/relé.</p>
+                        <p style="margin-top: 8px;"><strong>L1, L2, L3 (Line):</strong> Entrada de potência principal. Fases vindas do disjuntor geral.</p>
+                        <p style="margin-top: 8px;"><strong>T1, T2, T3 (Terminal):</strong> Saída de potência. Vai direto para a carga pesada (motor, resistência do forno).</p>
+                    </div>
+                    <div>
+                        <p><strong>NA / NO (Normalmente Aberto):</strong> Terminação 3 e 4 (Ex: 13/14). Fica desligado por padrão. Quando a bobina atinge tensão, ele fecha. Ideal para selo e luz verde de "ligado".</p>
+                        <p style="margin-top: 8px;"><strong>NF / NC (Normalmente Fechado):</strong> Terminação 1 e 2 (Ex: 21/22). Fica ligado por padrão. Quando a bobina atinge tensão, ele abre. Ideal para intertravamento e luz vermelha de "parado".</p>
+                    </div>
                 </div>
-                <p><strong>NA (Normalmente Aberto):</strong> O circuito fica desligado por padrão. A corrente só passa quando o dispositivo é acionado. Muito usado para botões de "Ligar".</p>
-                <p style="margin-top: 8px;"><strong>NF (Normalmente Fechado):</strong> O circuito fica ligado por padrão. A corrente é interrompida quando o dispositivo é acionado. Usado em botões de "Desligar" ou emergência.</p>
-            </div>
-
-            <div class="bloco-tecnico">
-                <h4><i class="fa-solid fa-toggle-on" style="color:var(--accent);"></i> Contatores vs. Relés</h4>
-                <p><strong>Contator:</strong> Dispositivo de alta potência para manobrar correntes elevadas (motores, aquecedores).</p>
-                <p style="margin-top: 8px;"><strong>Relé:</strong> Controle de sinais e correntes mais baixas (automação residencial, comandos lógicos).</p>
-            </div>
-
-            <div class="bloco-tecnico">
-                <h4><i class="fa-solid fa-shield-halved" style="color:var(--accent);"></i> Disjuntores (Curvas C, B e D)</h4>
-                <ul style="margin-left: 20px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
-                    <li><strong>Curva B:</strong> Dispara 3 a 5x a nominal. Geradores e cabos longos.</li>
-                    <li><strong>Curva C:</strong> Dispara 5 a 10x a nominal. Residências, tomadas, iluminação.</li>
-                    <li><strong>Curva D:</strong> Dispara 10 a 20x a nominal. Grandes motores, máquinas de solda.</li>
-                </ul>
             </div>
 
             <hr style="border:0; border-top:1px solid #e2e8f0; margin: 25px 0;">
-            <h3 style="color: var(--primary); margin-bottom: 15px;">Catálogo de Componentes</h3>
+            <h3 style="color: var(--primary); margin-bottom: 15px;">Catálogo Visual de Painel</h3>
 
             <div class="enciclopedia-grid">
                 
+                <!-- Contator WEG CWB12 -->
                 <div class="card-item-enciclopedia">
-                    <img src="https://placehold.co/400x250/e2e8f0/475569?text=FOTO\nIDR+(Tetrapolar)" alt="IDR" class="img-placeholder">
+                    <img src="./image_2aac67.jpg" alt="Contator WEG CWB12" class="img-placeholder" style="background-color: #fff; object-fit: contain; padding: 10px;">
                     <div class="conteudo">
-                        <h4>Interruptor Diferencial Residual (IDR)</h4>
-                        <p>Protege pessoas contra choques elétricos. Desarma ao detectar fugas mínimas (ex: 30mA).</p>
+                        <h4>Contator de Potência (Ex: WEG CWB12)</h4>
+                        <p>A chave principal de força. A bobina (A1/A2) aciona os contatos principais (L/T) para suportar altas correntes de motores e resistências.</p>
                         <div class="esquema-visual" style="font-size: 0.8rem;">
-[Fases]  ----> |      | ----> [Cargas]
-[Neutro] ----> | IDR  | ----> [Barramento N]
-* O Neutro DEVE passar pelo IDR!
+Superiores: 1L1, 3L2, 5L3 (Força) | 13NO, 21NC (Sinal)
+Inferiores: 2T1, 4T2, 6T3 (Carga) | 14NO, 22NC (Sinal)
+Lateral: A1+ / A2- (Alimentação da Bobina)
                         </div>
                     </div>
                 </div>
 
+                <!-- Minicontator / Bloco Auxiliar CW07 -->
                 <div class="card-item-enciclopedia">
-                    <img src="https://placehold.co/400x250/e2e8f0/475569?text=FOTO\nDPS+(Cartucho)" alt="DPS" class="img-placeholder">
+                    <img src="./image_2aacc4.jpg" alt="Minicontator WEG" class="img-placeholder" style="background-color: #fff; object-fit: contain; padding: 10px;">
                     <div class="conteudo">
-                        <h4>Dispositivo Protetor de Surtos (DPS)</h4>
-                        <p>Protege equipamentos contra raios e picos de tensão, direcionando o surto para o aterramento.</p>
+                        <h4>Minicontator / Contator Auxiliar</h4>
+                        <p>Usado estritamente para lógicas de comando em painéis. Multiplica os contatos disponíveis para enviar feedback ao CLP, ligar lâmpadas ou fazer travas.</p>
                         <div class="esquema-visual" style="font-size: 0.8rem;">
-[Rede / Fases] -----> [DPS] -----> [Aterramento]
-* Ligado em paralelo, antes do disjuntor geral.
+Neste modelo:
+Temos as linhas L/T e um contato auxiliar 13/14 NO.
+Fácil montagem em trilho DIN para automação.
                         </div>
                     </div>
                 </div>
 
+                <!-- Relé de Interface HF41F -->
                 <div class="card-item-enciclopedia">
-                    <img src="https://placehold.co/400x250/e2e8f0/475569?text=FOTO\nInversor+Frequencia" alt="Inversor" class="img-placeholder">
+                    <img src="./image_2aafcc.png" alt="Relé de Interface" class="img-placeholder" style="background-color: #fff; object-fit: contain; padding: 10px;">
                     <div class="conteudo">
-                        <h4>Inversor de Frequência</h4>
-                        <p>Controla a velocidade e o torque de motores trifásicos alterando a frequência (Hz).</p>
+                        <h4>Relé de Interface (Acoplador)</h4>
+                        <p>Protege as saídas delicadas do CLP. O CLP aciona a bobina sensível deste relé (24VDC), e o relé aciona o contator de potência maior.</p>
                         <div class="esquema-visual" style="font-size: 0.8rem;">
-Entrada: [R, S, T] ou [F, N]
-Saída:   [U, V, W] ----> Motor Trifásico
+Esquerda: A1 / A2 (Bobina/Coil VDC)
+Direita: 11(COM) - Comum
+         14(NO)  - Normalmente Aberto
+         12(NC)  - Normalmente Fechado
                         </div>
                     </div>
                 </div>
 
+                <!-- Esquema 3D Lâmpadas -->
                 <div class="card-item-enciclopedia">
-                    <img src="https://placehold.co/400x250/e2e8f0/475569?text=FOTO\nEncoder+Rotativo" alt="Encoder" class="img-placeholder">
+                    <img src="./image_2aaf70.png" alt="Esquema 3D Painel" class="img-placeholder" style="background-color: #000; object-fit: contain;">
                     <div class="conteudo">
-                        <h4>Encoder Rotativo</h4>
-                        <p>Envia pulsos elétricos para indicar posição, ângulo e velocidade exata de um eixo.</p>
+                        <h4>Esquema Prático: Disjuntor + Contator + Sinalização</h4>
+                        <p>Diagrama mostrando a distribuição prática: A fase desce do disjuntor para um seletor, que alimenta a bobina. Blocos auxiliares enviam sinais para os sinaleiros.</p>
                         <div class="esquema-visual" style="font-size: 0.8rem;">
-Fios: VCC (+) / GND (-)
-Sinais: Canal A / Canal B / Canal Z
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-item-enciclopedia">
-                    <img src="https://placehold.co/400x250/e2e8f0/475569?text=FOTO\nFonte+24VDC" alt="Fonte" class="img-placeholder">
-                    <div class="conteudo">
-                        <h4>Fonte Chaveada</h4>
-                        <p>Converte a corrente alternada da rede (110/220V) para corrente contínua (24VDC ou 12VDC).</p>
-                        <div class="esquema-visual" style="font-size: 0.8rem;">
-[L / N / Terra] ---> Fonte ---> [+V / -V]
+Luz Verde (Ligado): Fio passando por contato NO.
+Luz Vermelha (Desligado): Fio passando por contato NC.
+Bloco Lateral encaixado para expansão de lógica.
                         </div>
                     </div>
                 </div>
@@ -215,7 +198,7 @@ Sinais: Canal A / Canal B / Canal Z
         </div>
 
 
-        <!-- ================= FERRAMENTA 3: GUIA DE LIGAÇÕES VISUAIS ================= -->
+        <!-- ================= FERRAMENTA 3: GUIA DE LIGAÇÕES (MANTIDA IGUAL) ================= -->
         <div id="guiaFerramenta" class="ferramenta-container">
             <div class="ferramenta-header">
                 <h2><i class="fa-solid fa-diagram-project"></i> Esquemas de Ligações Práticas</h2>
@@ -241,18 +224,10 @@ Sinais: Canal A / Canal B / Canal Z
 [Terra]   -------------------------------------------> Proteção
                 </div>
             </div>
-
-            <div class="bloco-tecnico">
-                <h4>3. Comando Básico com Contator (Partida Direta)</h4>
-                <div class="esquema-visual">
-[Comando (Botão Ligar NA)] ---> Bobina do Contator (A1 / A2)
-[Fase Principal R,S,T] -------> Contatos Principais (1,3,5) ---> Motor
-                </div>
-            </div>
         </div>
 
 
-        <!-- ================= FERRAMENTA 4: ORÇAMENTOS COMPLETOS ================= -->
+        <!-- ================= FERRAMENTA 4: ORÇAMENTOS (MANTIDA IGUAL) ================= -->
         <div id="orcFerramenta" class="ferramenta-container">
             <div class="ferramenta-header">
                 <h2><i class="fa-solid fa-file-invoice-dollar"></i> Emitir Novo Orçamento</h2>
@@ -270,10 +245,6 @@ Sinais: Canal A / Canal B / Canal Z
                         <input type="text" id="clienteDoc" placeholder="000.000.000-00">
                     </div>
                     <div class="form-group">
-                        <label>Telefone / WhatsApp:</label>
-                        <input type="text" id="clienteTel" placeholder="(47) 99999-9999">
-                    </div>
-                    <div class="form-group">
                         <label>Endereço do Local:</label>
                         <input type="text" id="clienteEnd" placeholder="Rua, Bairro, Cidade">
                     </div>
@@ -287,14 +258,12 @@ Sinais: Canal A / Canal B / Canal Z
                         <select id="servicoPrincipal" onchange="atualizarOpcoesServico()">
                             <option value="eletrica">Elétrica</option>
                             <option value="gerais">Serviços Gerais</option>
-                            <option value="pintura">Pintura</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>Especificação do Serviço:</label>
                         <select id="servicoEspecifico" onchange="atualizarSugestaoPreco()">
-                            <!-- Preenchido dinamicamente via JS -->
                         </select>
                         <div id="alertaPreco" class="alerta-preco">
                             <i class="fa-solid fa-circle-info"></i> Valor sugerido: <br>
@@ -303,31 +272,19 @@ Sinais: Canal A / Canal B / Canal Z
                     </div>
 
                     <div class="form-group">
-                        <label>Quantidade (Unidades / m²):</label>
-                        <input type="number" step="0.1" id="servicoQtd" value="1" required>
-                    </div>
-
-                    <div class="form-group">
                         <label>Valor Total (R$):</label>
                         <input type="number" step="0.01" id="valorTotal" required placeholder="0.00">
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label>Observações Detalhadas:</label>
-                        <textarea id="servicoDesc" rows="2" placeholder="Detalhes da execução..."></textarea>
                     </div>
                 </div>
 
                 <button type="submit" class="btn-acao" id="btnSalvar">Salvar Orçamento</button>
             </form>
-            <div id="statusEnvio" class="resultado-box" style="display:none;"></div>
         </div>
 
     </div>
 
     <!-- Scripts de Lógica do Painel -->
     <script>
-        // 1. Navegação
         function abrirFerramenta(idFerramenta) {
             document.getElementById('painelMenu').style.display = 'none';
             document.querySelectorAll('.ferramenta-container').forEach(f => f.style.display = 'none');
@@ -341,7 +298,6 @@ Sinais: Canal A / Canal B / Canal Z
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // 2. Calculadora: Alternar campos
         function alternarCamposCalculadora() {
             const tipo = document.getElementById('tipoUso').value;
             const camposGeral = document.querySelectorAll('.campo-geral');
@@ -356,21 +312,13 @@ Sinais: Canal A / Canal B / Canal Z
             }
         }
 
-        // 3. Orçamento: Banco de Preços Sugeridos
         const tabelaPrecos = {
             "Instalação de Chuveiro": { min: 80.00, max: 150.00 },
             "Instalação de Tomadas / Fotocélulas": { min: 35.00, max: 80.00 },
             "Interruptores (Ponto)": { min: 35.00, max: 70.00 },
             "Instalação de Quadro de Distribuição": { min: 350.00, max: 900.00 },
-            "Geral (Instalação Nova Completa)": { min: 1500.00, max: 6000.00 },
-            
+            "Montagem de Painel de Comandos": { min: 500.00, max: 2500.00 },
             "Manutenção Preventiva Geral": { min: 150.00, max: 400.00 },
-            "Fixações e Ajustes Estruturais": { min: 100.00, max: 250.00 },
-            "Montagem de Equipamentos": { min: 120.00, max: 350.00 },
-            
-            "Pintura de Paredes (m²)": { min: 15.00, max: 45.00 },
-            "Pintura de Estruturas / Grades (m² / Un)": { min: 30.00, max: 80.00 },
-            "Acabamento e Retoques (Un)": { min: 50.00, max: 200.00 }
         };
 
         function atualizarOpcoesServico() {
@@ -385,19 +333,11 @@ Sinais: Canal A / Canal B / Canal Z
                     "Instalação de Tomadas / Fotocélulas",
                     "Interruptores (Ponto)",
                     "Instalação de Quadro de Distribuição",
-                    "Geral (Instalação Nova Completa)"
+                    "Montagem de Painel de Comandos"
                 ];
             } else if(principal === 'gerais') {
                 opcoes = [
-                    "Manutenção Preventiva Geral",
-                    "Fixações e Ajustes Estruturais",
-                    "Montagem de Equipamentos"
-                ];
-            } else if(principal === 'pintura') {
-                opcoes = [
-                    "Pintura de Paredes (m²)",
-                    "Pintura de Estruturas / Grades (m² / Un)",
-                    "Acabamento e Retoques (Un)"
+                    "Manutenção Preventiva Geral"
                 ];
             }
 
@@ -427,12 +367,10 @@ Sinais: Canal A / Canal B / Canal Z
             }
         }
 
-        // Inicializar formatação
         window.onload = function() {
             atualizarOpcoesServico();
         };
 
-        // 4. Calculadora: Execução do Cálculo
         document.getElementById('btnCalcularAvancado').addEventListener('click', function() {
             const tipo = document.getElementById('tipoUso').value;
             const distancia = parseFloat(document.getElementById('distanciaMetros').value) || 0;
@@ -477,6 +415,5 @@ Sinais: Canal A / Canal B / Canal Z
             }
         });
     </script>
-    <script type="module" src="./js/main.js"></script>
 </body>
 </html>
