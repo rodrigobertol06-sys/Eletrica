@@ -367,6 +367,17 @@
                 const wTugs = parseFloat(document.getElementById('wattsTugs').value) || 0;
 
                 const potTotalInstalada = (qChuveiros * pChuveiro) + (qAres * pArW) + wTugs;
+                const potenciaKWInstalada = potTotalInstalada / 1000;
+
+                // Corrente bruta baseada na potência instalada total para dimensionar o padrão de entrada e disjuntor geral de forma segura
+                let ibInstalado = 0;
+                if (rede === 'trifasico') {
+                    ibInstalado = potTotalInstalada / (Math.sqrt(3) * tensao);
+                } else if (rede === 'bifasico') {
+                    ibInstalado = potTotalInstalada / (2 * 127);
+                } else {
+                    ibInstalado = potTotalInstalada / tensao;
+                }
 
                 // Fator de demanda residencial padrão
                 let fd = 0.60;
@@ -375,36 +386,27 @@
 
                 const potDemanda = potTotalInstalada * fd;
                 
-                // Cálculo da corrente considerando o tipo de rede selecionado
-                let ibGeral = 0;
-                if (rede === 'trifasico') {
-                    ibGeral = potDemanda / (Math.sqrt(3) * tensao);
-                } else if (rede === 'bifasico') {
-                    ibGeral = potDemanda / (2 * 127); // Considerando distribuição equilibrada em 2 fases 127V ou 220V dependendo da linha
-                } else {
-                    ibGeral = potDemanda / tensao;
-                }
+                let ibDemanda = (rede === 'trifasico') ? (potDemanda / (Math.sqrt(3) * tensao)) : (potDemanda / (rede === 'bifasico' ? (2 * 127) : tensao));
+                let ibGeral = Math.max(ibInstalado * 0.75, ibDemanda);
 
-                // Sugestão Inteligente de Ligação com base na Demanda (kW) e Corrente
-                let sugestaoRede = "Monofásico (Até ~12 kW / 40A - verifique a norma da concessionária local)";
+                // Sugestão Inteligente baseada na Potência Instalada Bruta (kW) e Qtd de Chuveiros
+                let sugestaoRede = "Monofásico";
                 let classeRecomendada = "monofasico";
                 
-                // Em regra geral de concessionárias (ex: Celesc/RGE): acima de 10-12kW ou correntes > 40A/50A exige-se bifásico ou trifásico
-                let potenciaKW = potDemanda / 1000;
-                if (potenciaKW > 10 && potenciaKW <= 25) {
-                    sugestaoRede = "Bifásico (Recomendado para cargas entre 10kW e 25kW)";
+                if (potenciaKWInstalada > 8 && potenciaKWInstalada <= 20) {
+                    sugestaoRede = "Bifásico (Recomendado para cargas instaladas entre 8kW e 20kW)";
                     classeRecomendada = "bifasico";
-                } else if (potenciaKW > 25 || qChuveiros >= 3) {
-                    sugestaoRede = "Trifásico (Recomendado para alta demanda > 25kW e múltiplos equipamentos pesados)";
+                } else if (potenciaKWInstalada > 20 || qChuveiros >= 3) {
+                    sugestaoRede = "Trifásico (Indispensável para carga instalada > 20kW e múltiplos chuveiros pesados)";
                     classeRecomendada = "trifasico";
-                } else if (potenciaKW <= 10) {
+                } else {
                     sugestaoRede = "Monofásico ou Bifásico";
                     classeRecomendada = "monofasico";
                 }
 
                 let djGeral = disjuntoresPadrao[0];
                 for (let d of disjuntoresPadrao) {
-                    if (d >= ibGeral) { djGeral = d; break; }
+                    if (d >= ibInstalado) { djGeral = d; break; }
                 }
 
                 const col = (rede === 'trifasico') ? 'amp3' : 'amp2';
@@ -449,7 +451,7 @@
                             <div><strong>Potência Instalada:</strong> ${(potTotalInstalada/1000).toFixed(2)} kW</div>
                             <div><strong>Potência Calculada (Demanda):</strong> ${(potDemanda/1000).toFixed(2)} kW</div>
                             <div><strong>Fator de Demanda:</strong> ${(fd*100).toFixed(0)}%</div>
-                            <div><strong>Corrente de Entrada (Ib Geral):</strong> <span style="color:#d97706; font-weight:bold;">${ibGeral.toFixed(1)} A</span></div>
+                            <div><strong>Corrente de Entrada (Ib Bruta):</strong> <span style="color:#d97706; font-weight:bold;">${ibInstalado.toFixed(1)} A</span></div>
                             <div><strong>Disjuntor Geral (QDF):</strong> <span style="color:#2563eb; font-weight:bold;">${djGeral} A</span></div>
                             <div><strong>Cabo de Entrada (Alimentador):</strong> <span style="color:#166534; font-weight:bold;">${caboGeral.secao} mm²</span></div>
                         </div>
