@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Clademir Bertol - Elétrica & Automação</title>
     <link rel="manifest" href="./manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -10,7 +10,6 @@
 </head>
 <body>
 
-    <!-- BARRA SUPERIOR -->
     <header class="top-navbar">
         <div class="nav-brand">
             <img src="./Logo-Pai.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -20,13 +19,12 @@
             </div>
         </div>
         <div class="nav-badge">
-            <i class="fa-solid fa-bolt"></i> Sistema Online
+            <i class="fa-solid fa-bolt"></i> App v2.1
         </div>
     </header>
 
     <div class="container">
 
-        <!-- TELA PRINCIPAL: PAINEL DE CARDS -->
         <section id="painelMenu" class="dashboard-grid">
             
             <div class="card-modulo" onclick="abrirFerramenta('calcFerramenta')">
@@ -56,7 +54,6 @@
         </section>
 
 
-        <!-- ================= FERRAMENTA 1: CALCULADORA NBR 5410 ================= -->
         <div id="calcFerramenta" class="ferramenta-container" style="display:none;">
             <div class="ferramenta-header">
                 <h2><i class="fa-solid fa-calculator"></i> Dimensionamento Elétrico Avançado (NBR 5410)</h2>
@@ -69,7 +66,7 @@
                     <select id="tipoUso" onchange="alternarCamposCalculadora()">
                         <option value="geral">Carga Geral (Equipamento / Circuito Único)</option>
                         <option value="ar">Ar Condicionado Individual (BTU -> Watts)</option>
-                        <option value="casa">Entrada Residencial Completa (Quadro Personalizado)</option>
+                        <option value="casa" selected>Entrada Residencial Completa (Quadro Dinâmico)</option>
                     </select>
                 </div>
                 
@@ -91,20 +88,17 @@
                     </select>
                 </div>
 
-                <!-- CAMPO CARGA GERAL -->
-                <div class="form-group campo-geral">
+                <div class="form-group campo-geral" style="display:none;">
                     <label>Potência Total (Watts):</label>
                     <input type="number" id="potenciaWatts" placeholder="Ex: 10000" value="10000">
                 </div>
 
-                <!-- CAMPO AR CONDICIONADO -->
                 <div class="form-group campo-ar" style="display:none;">
                     <label>Capacidade em BTUs:</label>
                     <input type="number" id="inputBtus" placeholder="Ex: 12000" value="12000">
                 </div>
 
-                <!-- CAMPOS ENTRADA RESIDENCIAL / CIRCUITOS PERSONALIZADOS -->
-                <div class="form-group campo-casa" style="display:none; grid-column: span 3; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                <div class="form-group campo-casa" style="grid-column: span 3; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1;">
                     <h4 style="margin-bottom: 10px; color: #0b132b;"><i class="fa-solid fa-list-ul"></i> Adicionar Circuitos ao Quadro</h4>
                     
                     <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px; align-items: end;">
@@ -124,14 +118,13 @@
                             </select>
                         </div>
                         <div>
-                            <button type="button" onclick="adicionarCircuitoCustomizado()" style="background: #166534; color: white; border: none; padding: 9px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-plus"></i> Adicionar</button>
+                            <button type="button" onclick="adicionarCircuitoCustomizado()" style="background: #166534; color: white; border: none; padding: 9px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-plus"></i></button>
                         </div>
                     </div>
 
                     <div style="margin-top: 15px;">
                         <strong style="font-size: 0.9rem; color: #334155;">Circuitos na Lista para Dimensionamento:</strong>
                         <ul id="listaCircuitosCustomizados" style="margin-top: 5px; padding-left: 20px; font-size: 0.88rem; color: #334155;">
-                            <!-- Itens adicionados via JS aparecerão aqui -->
                         </ul>
                     </div>
                 </div>
@@ -148,7 +141,6 @@
         </div>
 
 
-        <!-- ================= FERRAMENTA 2: ENCICLOPÉDIA ================= -->
         <div id="enciclopediaFerramenta" class="ferramenta-container" style="display:none;">
             <div class="ferramenta-header">
                 <h2><i class="fa-solid fa-book-atlas"></i> Enciclopédia & Automação</h2>
@@ -172,7 +164,6 @@
         </div>
 
 
-        <!-- ================= FERRAMENTA 3: GUIA DE LIGAÇÕES VETORIAIS ================= -->
         <div id="guiaFerramenta" class="ferramenta-container" style="display:none;">
             <div class="ferramenta-header">
                 <h2><i class="fa-solid fa-diagram-project"></i> Diagramas Vetoriais (Interativos)</h2>
@@ -219,7 +210,6 @@
         </div>
 
 
-        <!-- ================= FERRAMENTA 4: ORÇAMENTOS ================= -->
         <div id="orcFerramenta" class="ferramenta-container" style="display:none;">
             <div class="ferramenta-header">
                 <h2><i class="fa-solid fa-file-invoice-dollar"></i> Emitir Novo Orçamento</h2>
@@ -275,9 +265,7 @@
 
     </div>
 
-    <!-- SCRIPTS DE LÓGICA E DIMENSIONAMENTO AVANÇADO -->
     <script>
-        // Array global para armazenar os circuitos customizados inseridos pelo usuário
         let circuitosCustomizados = [
             { nome: "Chuveiro 1", potencia: 7500, tensao: 220 },
             { nome: "Chuveiro 2", potencia: 7500, tensao: 220 },
@@ -290,7 +278,10 @@
             document.querySelectorAll('.ferramenta-container').forEach(f => f.style.display = 'none');
             document.getElementById(idFerramenta).style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            if(idFerramenta === 'calcFerramenta') atualizarListaCircuitosTela();
+            if(idFerramenta === 'calcFerramenta') {
+                atualizarListaCircuitosTela();
+                document.getElementById('btnCalcularAvancado').click();
+            }
         }
 
         function fecharFerramentas() {
@@ -304,7 +295,10 @@
             document.querySelectorAll('.campo-geral').forEach(c => c.style.display = (tipo === 'geral') ? 'block' : 'none');
             document.querySelectorAll('.campo-ar').forEach(c => c.style.display = (tipo === 'ar') ? 'block' : 'none');
             document.querySelectorAll('.campo-casa').forEach(c => c.style.display = (tipo === 'casa') ? 'grid' : 'none');
-            if(tipo === 'casa') atualizarListaCircuitosTela();
+            if(tipo === 'casa') {
+                atualizarListaCircuitosTela();
+                document.getElementById('btnCalcularAvancado').click();
+            }
         }
 
         function adicionarCircuitoCustomizado() {
@@ -320,11 +314,13 @@
             circuitosCustomizados.push({ nome, potencia, tensao });
             document.getElementById('novoNomeCircuito').value = "";
             atualizarListaCircuitosTela();
+            document.getElementById('btnCalcularAvancado').click();
         }
 
         function removerCircuitoCustomizado(index) {
             circuitosCustomizados.splice(index, 1);
             atualizarListaCircuitosTela();
+            document.getElementById('btnCalcularAvancado').click();
         }
 
         function atualizarListaCircuitosTela() {
@@ -345,7 +341,6 @@
             });
         }
 
-        // TABELA NBR 5410 - Método de Instalação B1, Cobre, Isolação PVC 70°C
         const tabelaCabosNBR = [
             { secao: 1.5, amp2: 17.5, amp3: 15.5 },
             { secao: 2.5, amp2: 24,   amp3: 21 },
@@ -431,7 +426,7 @@
 
                 const potDemanda = potTotalInstalada * fd;
 
-                // Nova regra: Bifásico atende confortavelmente até 25 kW de carga instalada
+                // Regra otimizada: Bifásico atende confortavelmente até 25 kW de carga instalada
                 let sugestaoRede = "Bifásico";
                 let redeCalculada = rede; 
 
@@ -450,7 +445,7 @@
                     ibInstalado = potDemanda / (Math.sqrt(3) * 220);
                     tipoDisjuntorTexto = "Trifásico (Tripolar)";
                 } else if (redeCalculada === 'bifasico') {
-                    // Corrente por fase calculada dividindo a demanda corretamente pelas duas fases (220V)
+                    // Corrente por fase calculada dividindo a demanda corretamente pelas duas fases
                     ibInstalado = potDemanda / 220; 
                     tipoDisjuntorTexto = "Bifásico (Bipolar)";
                 } else {
@@ -565,6 +560,7 @@
         function atualizarOpcoesServico() {
             const principal = document.getElementById('servicoPrincipal').value;
             const especifica = document.getElementById('servicoEspecifico');
+            if(!especifica) return;
             especifica.innerHTML = '';
 
             let opcoes = (principal === 'eletrica') ? [
@@ -589,6 +585,7 @@
             const servicoSelecionado = document.getElementById('servicoEspecifico').value;
             const alertaBox = document.getElementById('alertaPreco');
             const valorText = document.getElementById('valorSugeridoText');
+            if(!alertaBox || !valorText) return;
 
             if(tabelaPrecos[servicoSelecionado]) {
                 const min = tabelaPrecos[servicoSelecionado].min.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
