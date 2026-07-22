@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clademir Bertol - Elétrica & Serviços Gerais</title>
+    <title>Clademir Bertol - Engenharia, Elétrica & Automação</title>
     <link rel="manifest" href="./manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./style.css">
@@ -13,10 +13,10 @@
     <!-- BARRA SUPERIOR -->
     <header class="top-navbar">
         <div class="nav-brand">
-            <img src="./logo-pai.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+            <img src="./Logo-Pai.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
             <div class="nav-titles">
                 <h1>Clademir Bertol</h1>
-                <p>Elétrica & Serviços Gerais</p>
+                <p>Engenharia, Elétrica & Automação</p>
             </div>
         </div>
         <div class="nav-badge">
@@ -44,7 +44,7 @@
             <div class="card-modulo" onclick="abrirFerramenta('guiaFerramenta')">
                 <div class="card-icon icon-guia"><i class="fa-solid fa-diagram-project"></i></div>
                 <h3>Esquemas Lineart</h3>
-                <p>Diagramas vetoriais com fios coloridos (Potência e Comando).</p>
+                <p>Diagramas vetoriais com imagens reais e fios coloridos.</p>
             </div>
 
             <div class="card-modulo" onclick="abrirFerramenta('orcFerramenta')">
@@ -130,164 +130,63 @@
                     </div>
                 </div>
             </div>
-
-            <hr style="border:0; border-top:1px solid #e2e8f0; margin: 25px 0;">
-            <h3 style="color: var(--primary); margin-bottom: 15px;">Catálogo Visual de Painel</h3>
-
-            <div class="enciclopedia-grid">
-                
-                <div class="card-item-enciclopedia">
-                    <img src="./image_2aac67.jpg" alt="Contator WEG CWB12" class="img-placeholder" style="background-color: #fff; object-fit: contain; padding: 10px;">
-                    <div class="conteudo">
-                        <h4>Contator de Potência (WEG)</h4>
-                        <p>A chave principal de força. A bobina (A1/A2) aciona os contatos principais (L/T) para suportar altas correntes.</p>
-                    </div>
-                </div>
-
-                <div class="card-item-enciclopedia">
-                    <img src="./image_2aacc4.jpg" alt="Minicontator WEG" class="img-placeholder" style="background-color: #fff; object-fit: contain; padding: 10px;">
-                    <div class="conteudo">
-                        <h4>Bloco Auxiliar</h4>
-                        <p>Multiplica os contatos disponíveis para enviar feedback ao CLP, ligar lâmpadas ou fazer travas.</p>
-                    </div>
-                </div>
-
-                <div class="card-item-enciclopedia">
-                    <img src="./image_2aafcc.png" alt="Relé de Interface" class="img-placeholder" style="background-color: #fff; object-fit: contain; padding: 10px;">
-                    <div class="conteudo">
-                        <h4>Relé de Interface</h4>
-                        <p>Protege as saídas delicadas do CLP. O CLP aciona a bobina deste relé, e o relé aciona o contator maior.</p>
-                    </div>
-                </div>
-
-                <div class="card-item-enciclopedia">
-                    <img src="./image_2aaf70.png" alt="Esquema 3D Painel" class="img-placeholder" style="background-color: #000; object-fit: contain;">
-                    <div class="conteudo">
-                        <h4>Esquema Prático</h4>
-                        <p>Distribuição onde blocos auxiliares enviam sinais para os sinaleiros do painel (Verde = NO, Vermelho = NC).</p>
-                    </div>
-                </div>
-
-            </div>
         </div>
 
 
-        <!-- ================= FERRAMENTA 3: GUIA DE LIGAÇÕES VETORIAIS (NOVO) ================= -->
+        <!-- ================= FERRAMENTA 3: GUIA DE LIGAÇÕES VETORIAIS ================= -->
         <div id="guiaFerramenta" class="ferramenta-container">
             <div class="ferramenta-header">
-                <h2><i class="fa-solid fa-diagram-project"></i> Diagramas Vetoriais (Lineart)</h2>
+                <h2><i class="fa-solid fa-diagram-project"></i> Diagramas Vetoriais (Interativos)</h2>
                 <button class="btn-fechar" onclick="fecharFerramentas()"><i class="fa-solid fa-xmark"></i> Fechar</button>
             </div>
 
-            <!-- DIAGRAMA 1: POTÊNCIA -->
             <div class="bloco-tecnico" style="overflow-x: auto;">
-                <h4>1. Partida Direta (Circuito de Potência Trifásico)</h4>
-                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">A ligação pesada que vai para o motor. Fases R (Vermelho), S (Preto) e T (Azul).</p>
+                <h4>Partida Direta de Motor Trifásico</h4>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">
+                    Diagrama de potência renderizando as suas próprias imagens. Os fios interligam os bornes principais.
+                </p>
                 
-                <svg width="600" height="420" xmlns="http://www.w3.org/2000/svg" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;">
+                <!-- Área de Desenho SVG -->
+                <svg width="600" height="600" xmlns="http://www.w3.org/2000/svg" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;">
                     
-                    <!-- Linhas Principais -->
-                    <text x="50" y="30" font-weight="bold" font-family="sans-serif">R (L1)</text>
-                    <text x="110" y="30" font-weight="bold" font-family="sans-serif">S (L2)</text>
-                    <text x="170" y="30" font-weight="bold" font-family="sans-serif">T (L3)</text>
+                    <!-- TEXTOS DE ENTRADA -->
+                    <text x="60" y="30" font-weight="bold" font-family="sans-serif">R</text>
+                    <text x="110" y="30" font-weight="bold" font-family="sans-serif">S</text>
+                    <text x="160" y="30" font-weight="bold" font-family="sans-serif">T</text>
+
+                    <!-- FIOS: ENTRADA DE FORÇA -> DISJUNTOR -->
+                    <path d="M 65 40 L 65 70" stroke="#dc2626" stroke-width="4"/> <!-- R: Vermelho -->
+                    <path d="M 115 40 L 115 70" stroke="#1e293b" stroke-width="4"/> <!-- S: Preto -->
+                    <path d="M 165 40 L 165 70" stroke="#2563eb" stroke-width="4"/> <!-- T: Azul -->
+
+                    <!-- IMAGEM 1: DISJUNTOR TRIFÁSICO -->
+                    <image href="./Disjuntor_trifasico.png" x="40" y="70" width="150" height="120" />
+
+                    <!-- FIOS: DISJUNTOR -> CONTATORA -->
+                    <path d="M 65 190 L 65 240" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M 115 190 L 115 240" stroke="#1e293b" stroke-width="4"/>
+                    <path d="M 165 190 L 165 240" stroke="#2563eb" stroke-width="4"/>
+
+                    <!-- IMAGEM 2: CONTATORA -->
+                    <image href="./Contatora.png" x="40" y="240" width="150" height="120" />
+
+                    <!-- FIOS: CONTATORA -> RELÉ DE SOBRECARGA -->
+                    <path d="M 65 360 L 65 410" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M 115 360 L 115 410" stroke="#1e293b" stroke-width="4"/>
+                    <path d="M 165 360 L 165 410" stroke="#2563eb" stroke-width="4"/>
+
+                    <!-- IMAGEM 3: RELÉ DE SOBRECARGA -->
+                    <image href="./Rele_sobrecarga.png" x="40" y="410" width="150" height="120" />
+
+                    <!-- FIOS: RELÉ -> MOTOR (Para a direita) -->
+                    <path d="M 65 530 L 65 560 L 300 560 L 300 520" fill="transparent" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M 115 530 L 115 550 L 340 550 L 340 520" fill="transparent" stroke="#1e293b" stroke-width="4"/>
+                    <path d="M 165 530 L 165 540 L 380 540 L 380 520" fill="transparent" stroke="#2563eb" stroke-width="4"/>
+
+                    <!-- REPRESENTAÇÃO DO MOTOR (Desenhado em código mesmo) -->
+                    <circle cx="340" cy="460" r="50" fill="#dcfce7" stroke="#166534" stroke-width="3"/>
+                    <text x="315" y="468" font-size="24" font-weight="bold" fill="#166534" font-family="sans-serif">M 3~</text>
                     
-                    <!-- Fios até Disjuntor -->
-                    <line x1="70" y1="40" x2="70" y2="90" stroke="#dc2626" stroke-width="4"/> 
-                    <line x1="130" y1="40" x2="130" y2="90" stroke="#1e293b" stroke-width="4"/> 
-                    <line x1="190" y1="40" x2="190" y2="90" stroke="#2563eb" stroke-width="4"/> 
-
-                    <!-- Disjuntor Motor -->
-                    <rect x="40" y="90" width="180" height="80" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" rx="4"/>
-                    <text x="50" y="110" font-size="12" font-weight="bold" font-family="sans-serif">Disjuntor Motor</text>
-                    <circle cx="70" cy="155" r="5" fill="#334155"/> <text x="55" y="158" font-size="9" fill="#fff">2</text>
-                    <circle cx="130" cy="155" r="5" fill="#334155"/> <text x="115" y="158" font-size="9" fill="#fff">4</text>
-                    <circle cx="190" cy="155" r="5" fill="#334155"/> <text x="175" y="158" font-size="9" fill="#fff">6</text>
-
-                    <!-- Fios Disjuntor -> Contator -->
-                    <line x1="70" y1="160" x2="70" y2="210" stroke="#dc2626" stroke-width="4"/>
-                    <line x1="130" y1="160" x2="130" y2="210" stroke="#1e293b" stroke-width="4"/>
-                    <line x1="190" y1="160" x2="190" y2="210" stroke="#2563eb" stroke-width="4"/>
-
-                    <!-- Contator Principal -->
-                    <rect x="40" y="210" width="180" height="90" fill="#e2e8f0" stroke="#64748b" stroke-width="2" rx="4"/>
-                    <rect x="150" y="235" width="60" height="20" fill="#0b132b" rx="2"/>
-                    <text x="50" y="230" font-size="12" font-weight="bold" font-family="sans-serif">Contator (K1)</text>
-                    <text x="165" y="249" font-size="10" fill="#fff" font-family="sans-serif">WEG</text>
-                    
-                    <circle cx="70" cy="285" r="5" fill="#334155"/> <text x="45" y="288" font-size="9" font-family="sans-serif">2T1</text>
-                    <circle cx="130" cy="285" r="5" fill="#334155"/> <text x="105" y="288" font-size="9" font-family="sans-serif">4T2</text>
-                    <circle cx="190" cy="285" r="5" fill="#334155"/> <text x="165" y="288" font-size="9" font-family="sans-serif">6T3</text>
-
-                    <!-- Fios Contator -> Motor -->
-                    <path d="M 70 290 L 70 340 L 350 340 L 350 320" fill="transparent" stroke="#dc2626" stroke-width="4"/>
-                    <path d="M 130 290 L 130 330 L 390 330 L 390 320" fill="transparent" stroke="#1e293b" stroke-width="4"/>
-                    <path d="M 190 290 L 190 320 L 430 320" fill="transparent" stroke="#2563eb" stroke-width="4"/>
-
-                    <!-- Motor -->
-                    <circle cx="390" cy="270" r="50" fill="#dcfce7" stroke="#166534" stroke-width="3"/>
-                    <text x="365" y="278" font-size="24" font-weight="bold" fill="#166534" font-family="sans-serif">M 3~</text>
-                    
-                    <!-- Bornes Motor -->
-                    <circle cx="350" cy="315" r="5" fill="#334155"/> <text x="345" y="305" font-size="10" font-family="sans-serif">U1</text>
-                    <circle cx="390" cy="315" r="5" fill="#334155"/> <text x="385" y="305" font-size="10" font-family="sans-serif">V1</text>
-                    <circle cx="430" cy="315" r="5" fill="#334155"/> <text x="425" y="305" font-size="10" font-family="sans-serif">W1</text>
-                </svg>
-            </div>
-
-            <!-- DIAGRAMA 2: COMANDO -->
-            <div class="bloco-tecnico" style="overflow-x: auto; margin-top: 20px;">
-                <h4>2. Acionamento de Comando (CLP 24V -> Relé -> Contator 220V)</h4>
-                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Proteção do CLP: A saída 24VDC aciona apenas a bobina do Relé. O contato do Relé é quem joga a Fase (220V) para o Contator Pesado.</p>
-                
-                <svg width="600" height="350" xmlns="http://www.w3.org/2000/svg" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;">
-                    
-                    <!-- CLP (24V) -->
-                    <rect x="20" y="40" width="100" height="120" fill="#f8fafc" stroke="#475569" stroke-width="2" rx="4"/>
-                    <text x="45" y="65" font-size="14" font-weight="bold" font-family="sans-serif">CLP</text>
-                    <text x="30" y="85" font-size="10" fill="#64748b" font-family="sans-serif">Saída (Q1)</text>
-                    <circle cx="90" cy="100" r="5" fill="#16a34a"/> <!-- Borne 24V -->
-                    <circle cx="90" cy="130" r="5" fill="#334155"/> <!-- Borne 0V -->
-                    <text x="65" y="105" font-size="10" font-family="sans-serif">24V+</text>
-                    <text x="70" y="135" font-size="10" font-family="sans-serif">0V</text>
-
-                    <!-- Fios 24V (CLP para Relé) -->
-                    <path d="M 95 100 L 220 100 L 220 125" fill="transparent" stroke="#16a34a" stroke-width="3"/> <!-- 24V Positivo Verde -->
-                    <path d="M 95 130 L 200 130 L 200 240 L 220 240" fill="transparent" stroke="#000" stroke-width="2" stroke-dasharray="4"/> <!-- 0V Negativo tracejado -->
-
-                    <!-- Relé de Interface -->
-                    <rect x="180" y="130" width="100" height="120" fill="#fef3c7" stroke="#d97706" stroke-width="2" rx="4"/>
-                    <text x="195" y="150" font-size="12" font-weight="bold" font-family="sans-serif">Relé (K2)</text>
-                    
-                    <!-- Bobina do Relé -->
-                    <circle cx="220" cy="130" r="4" fill="#334155"/> <text x="230" y="140" font-size="10" font-family="sans-serif">A1</text>
-                    <circle cx="220" cy="240" r="4" fill="#334155"/> <text x="230" y="245" font-size="10" font-family="sans-serif">A2</text>
-                    
-                    <!-- Contato do Relé -->
-                    <circle cx="260" cy="180" r="4" fill="#334155"/> <text x="210" y="185" font-size="10" font-family="sans-serif">11 (COM)</text>
-                    <circle cx="260" cy="210" r="4" fill="#334155"/> <text x="215" y="215" font-size="10" font-family="sans-serif">14 (NO)</text>
-
-                    <!-- Alimentação 220V Comando -->
-                    <text x="350" y="30" font-size="12" font-weight="bold" fill="#dc2626" font-family="sans-serif">Fase (220V)</text>
-                    <path d="M 380 40 L 380 180 L 265 180" fill="transparent" stroke="#dc2626" stroke-width="3"/> <!-- Fase entra no 11 do Relé -->
-
-                    <!-- Fio Fase saindo do Relé para o Contator -->
-                    <path d="M 265 210 L 380 210 L 380 265" fill="transparent" stroke="#dc2626" stroke-width="3"/>
-
-                    <!-- Contator (Bobina) -->
-                    <rect x="420" y="210" width="120" height="100" fill="#e2e8f0" stroke="#64748b" stroke-width="2" rx="4"/>
-                    <text x="430" y="240" font-size="12" font-weight="bold" font-family="sans-serif">Contator (K1)</text>
-                    <text x="430" y="255" font-size="10" fill="#64748b" font-family="sans-serif">Bobina 220V</text>
-                    
-                    <circle cx="440" cy="265" r="4" fill="#334155"/> <text x="450" y="270" font-size="10" font-family="sans-serif">A1</text>
-                    <circle cx="500" cy="265" r="4" fill="#334155"/> <text x="510" y="270" font-size="10" font-family="sans-serif">A2</text>
-
-                    <!-- Ligação A1 do Contator -->
-                    <path d="M 380 265 L 435 265" fill="transparent" stroke="#dc2626" stroke-width="3"/>
-
-                    <!-- Ligação A2 (Neutro) do Contator -->
-                    <text x="500" y="180" font-size="12" font-weight="bold" fill="#2563eb" font-family="sans-serif">Neutro</text>
-                    <path d="M 515 190 L 515 260" fill="transparent" stroke="#2563eb" stroke-width="3"/>
-
                 </svg>
             </div>
         </div>
