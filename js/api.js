@@ -1,13 +1,9 @@
 // js/api.js
 
-// Cole aqui a URL gerada quando você publicar seu Apps Script como Web App (Executável)
-const WEB_APP_URL = "SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI"; 
+// URL oficial do Web App do Google Apps Script configurada
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxcsefSN2vcKLvr7KC00G8DbVi4JoclaZd7YROniWu_MTxF4Ws9Vp98fnzKAIc4pgeI/exec"; 
 
 export async function enviarOrcamentoParaPlanilha(dados) {
-    if (WEB_APP_URL.includes("SUA_URL")) {
-        throw new Error("Você precisa configurar a URL do Web App do Google Apps Script no arquivo js/api.js");
-    }
-
     try {
         const resposta = await fetch(WEB_APP_URL, {
             method: "POST",
