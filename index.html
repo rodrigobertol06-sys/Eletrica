@@ -10,74 +10,85 @@
 </head>
 <body>
 
-    <!-- BARRA SUPERIOR CORPORATIVA -->
+    <!-- BARRA SUPERIOR -->
     <header class="top-navbar">
         <div class="nav-brand">
-            <!-- Certifique-se de que o arquivo enviado se chama logo-pai.png -->
-            <img src="./logo-pai.png" alt="Logo Clademir Bertol" class="logo-img">
+            <!-- Se a sua imagem estiver na raiz como 'logo-pai.png', ela vai carregar aqui perfeitamente -->
+            <img src="./logo-pai.png" alt="Logo Clademir Bertol" class="logo-img" onerror="this.style.display='none'">
             <div class="nav-titles">
                 <h1>Clademir Bertol</h1>
-                <p>Elétrica & Prestação de Serviços</p>
+                <p>Painel Técnico & Orçamentos</p>
             </div>
         </div>
         <div class="nav-badge">
-            <i class="fa-solid fa-bolt"></i> Sistema Ativo
+            <i class="fa-solid fa-bolt"></i> Sistema Online
         </div>
     </header>
 
     <div class="container">
 
-        <!-- BALÃO 1: DIMENSIONAMENTO DE CABOS -->
-        <div class="balao">
-            <h2><i class="fa-solid fa-calculator"></i> Calculadora de Cabos & Disjuntores</h2>
-            <div class="form-group">
-                <label for="inputAmperes">Corrente do Circuito (Amperes - A):</label>
-                <input type="number" id="inputAmperes" placeholder="Ex: 20">
+        <!-- BALÃO 1: CALCULADORA DE CABOS (Expansível) -->
+        <details class="balao-accordion" open>
+            <summary>
+                <span><i class="fa-solid fa-calculator icone-titulo"></i> Calculadora de Cabos e Disjuntores</span>
+            </summary>
+            <div class="conteudo-balao">
+                <div class="form-group">
+                    <label for="inputAmperes">Corrente do Circuito (Amperes - A):</label>
+                    <input type="number" id="inputAmperes" placeholder="Ex: 20">
+                </div>
+                <button id="btnCalcularCabo">Calcular Material</button>
+                <div id="resultadoCabo" class="resultado-box" style="display:none;"></div>
             </div>
-            <button id="btnCalcularCabo">Calcular Material</button>
-            <div id="resultadoCabo" class="resultado-box" style="display:none;"></div>
-        </div>
+        </details>
 
-        <!-- BALÃO 2: APOSTILA INTERATIVA / GUIAS -->
-        <div class="balao">
-            <h2><i class="fa-solid fa-book-open"></i> Guia Técnico & Explicações</h2>
-            <div class="form-group">
-                <label for="selectLigacao">Selecione o Tipo de Instalação:</label>
-                <select id="selectLigacao">
-                    <option value="">-- Escolha uma opção --</option>
-                    <option value="monofasico">Monofásico (1F + N)</option>
-                    <option value="bifasico">Bifásico (2F + N)</option>
-                    <option value="trifasico">Trifásico (3F + N)</option>
-                    <option value="estrela-triangulo">Partida Estrela-Triângulo (Motores)</option>
-                </select>
+        <!-- BALÃO 2: GUIA TÉCNICO (Expansível) -->
+        <details class="balao-accordion">
+            <summary>
+                <span><i class="fa-solid fa-book-open icone-titulo"></i> Guia Técnico & Instalações</span>
+            </summary>
+            <div class="conteudo-balao">
+                <div class="form-group">
+                    <label for="selectLigacao">Selecione o Tipo de Instalação:</label>
+                    <select id="selectLigacao">
+                        <option value="">-- Escolha uma opção --</option>
+                        <option value="monofasico">Monofásico (1F + N)</option>
+                        <option value="bifasico">Bifásico (2F + N)</option>
+                        <option value="trifasico">Trifásico (3F + N)</option>
+                        <option value="estrela-triangulo">Partida Estrela-Triângulo (Motores)</option>
+                    </select>
+                </div>
+                <div id="resultadoExplicacao" class="explicacao">Selecione um item acima para ver o resumo prático e o parâmetro técnico.</div>
             </div>
-            <div id="resultadoExplicacao" class="explicacao">Selecione um item acima para ver o resumo prático e o "porquê" técnico.</div>
-        </div>
+        </details>
 
-        <!-- BALÃO 3: REGISTRO DE ORÇAMENTO (GOOGLE SHEETS) -->
-        <div class="balao" style="border-left-color: #3b82f6;">
-            <h2><i class="fa-solid fa-file-invoice-dollar"></i> Novo Orçamento / Cliente</h2>
-            <form id="formOrcamento">
-                <div class="form-group">
-                    <label>Nome do Cliente:</label>
-                    <input type="text" id="clienteNome" required placeholder="Nome completo ou empresa">
-                </div>
-                <div class="form-group">
-                    <label>Descrição do Serviço:</label>
-                    <textarea id="servicoDesc" rows="2" required placeholder="Ex: Instalação de Quadro de Distribuição"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Valor Total (R$):</label>
-                    <input type="number" step="0.01" id="valorTotal" required placeholder="0.00">
-                </div>
-                <button type="submit" style="background-color: #2563eb;" id="btnSalvar">Salvar na Planilha</button>
-            </form>
-            <div id="statusEnvio" class="resultado-box" style="display:none;"></div>
-        </div>
+        <!-- BALÃO 3: NOVO ORÇAMENTO (Expansível) -->
+        <details class="balao-accordion">
+            <summary>
+                <span><i class="fa-solid fa-file-invoice-dollar icone-titulo"></i> Novo Orçamento / Cliente</span>
+            </summary>
+            <div class="conteudo-balao">
+                <form id="formOrcamento">
+                    <div class="form-group">
+                        <label>Nome do Cliente:</label>
+                        <input type="text" id="clienteNome" required placeholder="Nome completo ou empresa">
+                    </div>
+                    <div class="form-group">
+                        <label>Descrição do Serviço:</label>
+                        <textarea id="servicoDesc" rows="2" required placeholder="Ex: Montagem de QGBT e passagem de cabos"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Valor Total (R$):</label>
+                        <input type="number" step="0.01" id="valorTotal" required placeholder="0.00">
+                    </div>
+                    <button type="submit" id="btnSalvar">Salvar na Planilha</button>
+                </form>
+                <div id="statusEnvio" class="resultado-box" style="display:none;"></div>
+            </div>
+        </details>
 
     </div>
 
-    <!-- Script Principal Modularizado -->
     <script type="module" src="./js/main.js"></script>
 </body>
 </html>
