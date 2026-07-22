@@ -74,7 +74,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Tipo de Rede Atual:</label>
+                    <label>Tipo de Rede Atual / Selecionada:</label>
                     <select id="tipoRede">
                         <option value="monofasico">Monofásico (1F + N)</option>
                         <option value="bifasico" selected>Bifásico (2F + N)</option>
@@ -350,7 +350,7 @@
 
         document.getElementById('btnCalcularAvancado').addEventListener('click', function() {
             const tipo = document.getElementById('tipoUso').value;
-            const rede = document.getElementById('tipoRede').value;
+            let rede = document.getElementById('tipoRede').value;
             const tensao = parseFloat(document.getElementById('tensaoVolts').value) || 220;
             const distancia = parseFloat(document.getElementById('distanciaMetros').value) || 10;
             const resDiv = document.getElementById('resultadoAvancado');
@@ -369,58 +369,61 @@
                 const potTotalInstalada = (qChuveiros * pChuveiro) + (qAres * pArW) + wTugs;
                 const potenciaKWInstalada = potTotalInstalada / 1000;
 
-                // Corrente bruta baseada na potência instalada total para dimensionar o padrão de entrada e disjuntor geral de forma segura
-                let ibInstalado = 0;
-                if (rede === 'trifasico') {
-                    ibInstalado = potTotalInstalada / (Math.sqrt(3) * tensao);
-                } else if (rede === 'bifasico') {
-                    ibInstalado = potTotalInstalada / (2 * 127);
+                // Sugestão Inteligente de Rede baseada na Potência Instalada Bruta (kW)
+                let sugestaoRede = "Monofásico";
+                let redeCalculada = rede; // padrão do select
+
+                if (potenciaKWInstalada > 8 && potenciaKWInstalada <= 20) {
+                    sugestaoRede = "Bifásico (Recomendado para cargas entre 8kW e 20kW)";
+                    redeCalculada = "bifasico";
+                } else if (potenciaKWInstalada > 20 || qChuveiros >= 3) {
+                    sugestaoRede = "Trifásico (Indispensável para carga instalada > 20kW ou múltiplos chuveiros)";
+                    redeCalculada = "trifasico";
                 } else {
-                    ibInstalado = potTotalInstalada / tensao;
+                    sugestaoRede = "Monofásico ou Bifásico";
+                    redeCalculada = "monofasico";
                 }
 
-                // Fator de demanda residencial padrão
+                // Cálculo da corrente bruta na entrada conforme o tipo de ligação ideal/calculado
+                let ibInstalado = 0;
+                let tipoDisjuntorTexto = "";
+
+                if (redeCalculada === 'trifasico') {
+                    ibInstalado = potTotalInstalada / (Math.sqrt(3) * tensao);
+                    tipoDisjuntorTexto = "Trifásico (Tripolar)";
+                } else if (redeCalculada === 'bifasico') {
+                    ibInstalado = potTotalInstalada / (2 * 127);
+                    tipoDisjuntorTexto = "Bifásico (Bipolar)";
+                } else {
+                    ibInstalado = potTotalInstalada / tensao;
+                    tipoDisjuntorTexto = "Monofásico (Unipolar)";
+                }
+
+                // Fator de demanda residencial
                 let fd = 0.60;
                 if (potTotalInstalada > 10000) fd = 0.55;
                 if (potTotalInstalada > 20000) fd = 0.45;
 
                 const potDemanda = potTotalInstalada * fd;
-                
-                let ibDemanda = (rede === 'trifasico') ? (potDemanda / (Math.sqrt(3) * tensao)) : (potDemanda / (rede === 'bifasico' ? (2 * 127) : tensao));
-                let ibGeral = Math.max(ibInstalado * 0.75, ibDemanda);
 
-                // Sugestão Inteligente baseada na Potência Instalada Bruta (kW) e Qtd de Chuveiros
-                let sugestaoRede = "Monofásico";
-                let classeRecomendada = "monofasico";
-                
-                if (potenciaKWInstalada > 8 && potenciaKWInstalada <= 20) {
-                    sugestaoRede = "Bifásico (Recomendado para cargas instaladas entre 8kW e 20kW)";
-                    classeRecomendada = "bifasico";
-                } else if (potenciaKWInstalada > 20 || qChuveiros >= 3) {
-                    sugestaoRede = "Trifásico (Indispensável para carga instalada > 20kW e múltiplos chuveiros pesados)";
-                    classeRecomendada = "trifasico";
-                } else {
-                    sugestaoRede = "Monofásico ou Bifásico";
-                    classeRecomendada = "monofasico";
-                }
-
+                // Seleção do Disjuntor Geral
                 let djGeral = disjuntoresPadrao[0];
                 for (let d of disjuntoresPadrao) {
                     if (d >= ibInstalado) { djGeral = d; break; }
                 }
 
-                const col = (rede === 'trifasico') ? 'amp3' : 'amp2';
+                const col = (redeCalculada === 'trifasico') ? 'amp3' : 'amp2';
                 let caboGeral = tabelaCabosNBR.find(c => c[col] >= djGeral) || tabelaCabosNBR[tabelaCabosNBR.length - 1];
 
                 let listaCircuitos = [];
                 for(let i=1; i<=qChuveiros; i++) {
-                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Chuveiro ${i}`, pChuveiro, tensao, distancia, rede));
+                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Chuveiro ${i}`, pChuveiro, tensao, distancia, redeCalculada));
                 }
                 for(let i=1; i<=qAres; i++) {
-                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Ar Condicionado ${pArBtu} BTU (${i})`, pArW, tensao, distancia, rede));
+                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Ar Condicionado ${pArBtu} BTU (${i})`, pArW, tensao, distancia, redeCalculada));
                 }
                 if (wTugs > 0) {
-                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Geral (Iluminação e Tomadas)`, wTugs, tensao, distancia, rede));
+                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Geral (Iluminação e Tomadas)`, wTugs, tensao, distancia, redeCalculada));
                 }
 
                 const totalDisjuntores = listaCircuitos.length + 1;
@@ -451,8 +454,8 @@
                             <div><strong>Potência Instalada:</strong> ${(potTotalInstalada/1000).toFixed(2)} kW</div>
                             <div><strong>Potência Calculada (Demanda):</strong> ${(potDemanda/1000).toFixed(2)} kW</div>
                             <div><strong>Fator de Demanda:</strong> ${(fd*100).toFixed(0)}%</div>
-                            <div><strong>Corrente de Entrada (Ib Bruta):</strong> <span style="color:#d97706; font-weight:bold;">${ibInstalado.toFixed(1)} A</span></div>
-                            <div><strong>Disjuntor Geral (QDF):</strong> <span style="color:#2563eb; font-weight:bold;">${djGeral} A</span></div>
+                            <div><strong>Corrente Nominal Bruta:</strong> <span style="color:#d97706; font-weight:bold;">${ibInstalado.toFixed(1)} A</span></div>
+                            <div><strong>Disjuntor Geral (QDF):</strong> <span style="color:#2563eb; font-weight:bold;">Disjuntor ${tipoDisjuntorTexto} de ${djGeral} A</span></div>
                             <div><strong>Cabo de Entrada (Alimentador):</strong> <span style="color:#166534; font-weight:bold;">${caboGeral.secao} mm²</span></div>
                         </div>
 
@@ -489,12 +492,13 @@
                 }
                 
                 let resCircuito = dimensionarCircuitoUnico("Equipamento / Circuito", potenciaInstalada, tensao, distancia, rede);
+                let tipoDjUnico = (rede === 'trifasico') ? 'Trifásico (Tripolar)' : (rede === 'bifasico' ? 'Bifásico (Bipolar)' : 'Monofásico (Unipolar)');
 
                 resDiv.innerHTML = `
                     <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 18px; border-radius: 8px;">
                         <h3 style="color: #0b132b; margin-bottom: 10px;"><i class="fa-solid fa-file-contract"></i> Relatório de Circuito Único</h3>
                         • <strong>Corrente Nominal (Ib):</strong> <span style="color:#d97706; font-weight:bold;">${resCircuito.ib.toFixed(1)} A</span><br>
-                        • <strong>Disjuntor Sugerido (In):</strong> <span style="color:#2563eb; font-weight:bold;">${resCircuito.disjuntor} A</span> (Termomagnético Curva C)<br>
+                        • <strong>Disjuntor Sugerido (In):</strong> <span style="color:#2563eb; font-weight:bold;">Disjuntor ${tipoDjUnico} de ${resCircuito.disjuntor} A</span> (Curva C)<br>
                         • <strong>Cabo Recomendado:</strong> <span style="color:#166534; font-weight:bold;">${resCircuito.caboSecao} mm²</span> (Distância: ${distancia}m)<br>
                         • <strong>Ampacidade do Cabo (Iz):</strong> Suporta até ${resCircuito.ampacidadeIz} A em eletroduto<br>
                         • <strong>Queda de Tensão (ΔV):</strong> ${resCircuito.quedaPct.toFixed(2)}% ${resCircuito.quedaPct > 4 ? '<span style="color:red;">⚠️ Excede 4%! Bitola aumentada.</span>' : '<span style="color:green;">✓ Dentro do limite NBR 5410 (&le;4%)</span>'}<br>
