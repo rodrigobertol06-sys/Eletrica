@@ -69,7 +69,7 @@
                     <select id="tipoUso" onchange="alternarCamposCalculadora()">
                         <option value="geral">Carga Geral (Equipamento / Circuito Único)</option>
                         <option value="ar">Ar Condicionado Individual (BTU -> Watts)</option>
-                        <option value="casa">Entrada Residencial Completa (Quadro de Circuitos)</option>
+                        <option value="casa">Entrada Residencial Completa (Quadro Personalizado)</option>
                     </select>
                 </div>
                 
@@ -103,32 +103,41 @@
                     <input type="number" id="inputBtus" placeholder="Ex: 12000" value="12000">
                 </div>
 
-                <!-- CAMPOS ENTRADA RESIDENCIAL -->
-                <div class="form-group campo-casa" style="display:none;">
-                    <label>Qtd. Chuveiros Elétricos:</label>
-                    <input type="number" id="qtdChuveiros" value="2" min="0">
-                </div>
-                <div class="form-group campo-casa" style="display:none;">
-                    <label>Potência por Chuveiro (Watts):</label>
-                    <input type="number" id="potChuveiroW" value="7500" placeholder="Ex: 7500">
+                <!-- CAMPOS ENTRADA RESIDENCIAL / CIRCUITOS PERSONALIZADOS -->
+                <div class="form-group campo-casa" style="display:none; grid-column: span 3; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                    <h4 style="margin-bottom: 10px; color: #0b132b;"><i class="fa-solid fa-list-ul"></i> Adicionar Circuitos ao Quadro</h4>
+                    
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px; align-items: end;">
+                        <div>
+                            <label style="font-size:0.85rem;">Nome do Circuito / Equipamento:</label>
+                            <input type="text" id="novoNomeCircuito" placeholder="Ex: Chuveiro Banheiro Principal" style="width:100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                        </div>
+                        <div>
+                            <label style="font-size:0.85rem;">Potência (Watts):</label>
+                            <input type="number" id="novoPotCircuito" placeholder="Ex: 7500" value="7500" style="width:100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                        </div>
+                        <div>
+                            <label style="font-size:0.85rem;">Tensão (V):</label>
+                            <select id="novoTensaoCircuito" style="width:100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; background:white;">
+                                <option value="220" selected>220V</option>
+                                <option value="127">127V</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button type="button" onclick="adicionarCircuitoCustomizado()" style="background: #166534; color: white; border: none; padding: 9px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-plus"></i> Adicionar</button>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <strong style="font-size: 0.9rem; color: #334155;">Circuitos na Lista para Dimensionamento:</strong>
+                        <ul id="listaCircuitosCustomizados" style="margin-top: 5px; padding-left: 20px; font-size: 0.88rem; color: #334155;">
+                            <!-- Itens adicionados via JS aparecerão aqui -->
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="form-group campo-casa" style="display:none;">
-                    <label>Qtd. Ar Condicionado:</label>
-                    <input type="number" id="qtdAres" value="2" min="0">
-                </div>
-                <div class="form-group campo-casa" style="display:none;">
-                    <label>Potência por Ar Condicionado (BTU):</label>
-                    <input type="number" id="potArBtu" value="12000" placeholder="Ex: 12000">
-                </div>
-
-                <div class="form-group campo-casa" style="display:none;">
-                    <label>Iluminação e Tomadas TUGs (Watts Est.):</label>
-                    <input type="number" id="wattsTugs" value="4000" placeholder="Ex: 4000">
-                </div>
-
-                <div class="form-group">
-                    <label>Distância do Quadro ao Carga/Ramal (Metros):</label>
+                <div class="form-group" style="grid-column: span 3;">
+                    <label>Distância do Quadro à Carga / Ramal (Metros):</label>
                     <input type="number" id="distanciaMetros" placeholder="Ex: 15" value="15">
                 </div>
             </div>
@@ -268,11 +277,20 @@
 
     <!-- SCRIPTS DE LÓGICA E DIMENSIONAMENTO AVANÇADO -->
     <script>
+        // Array global para armazenar os circuitos customizados inseridos pelo usuário
+        let circuitosCustomizados = [
+            { nome: "Chuveiro 1", potencia: 7500, tensao: 220 },
+            { nome: "Chuveiro 2", potencia: 7500, tensao: 220 },
+            { nome: "Ar Condicionado 12000 BTU", potencia: 1091, tensao: 220 },
+            { nome: "Iluminação & Tomadas (TUGs)", potencia: 4000, tensao: 127 }
+        ];
+
         function abrirFerramenta(idFerramenta) {
             document.getElementById('painelMenu').style.display = 'none';
             document.querySelectorAll('.ferramenta-container').forEach(f => f.style.display = 'none');
             document.getElementById(idFerramenta).style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            if(idFerramenta === 'calcFerramenta') atualizarListaCircuitosTela();
         }
 
         function fecharFerramentas() {
@@ -285,7 +303,46 @@
             const tipo = document.getElementById('tipoUso').value;
             document.querySelectorAll('.campo-geral').forEach(c => c.style.display = (tipo === 'geral') ? 'block' : 'none');
             document.querySelectorAll('.campo-ar').forEach(c => c.style.display = (tipo === 'ar') ? 'block' : 'none');
-            document.querySelectorAll('.campo-casa').forEach(c => c.style.display = (tipo === 'casa') ? 'block' : 'none');
+            document.querySelectorAll('.campo-casa').forEach(c => c.style.display = (tipo === 'casa') ? 'grid' : 'none');
+            if(tipo === 'casa') atualizarListaCircuitosTela();
+        }
+
+        function adicionarCircuitoCustomizado() {
+            const nome = document.getElementById('novoNomeCircuito').value.trim();
+            const potencia = parseFloat(document.getElementById('novoPotCircuito').value);
+            const tensao = parseInt(document.getElementById('novoTensaoCircuito').value);
+
+            if(!nome || isNaN(potencia) || potencia <= 0) {
+                alert("Por favor, preencha o nome e uma potência válida.");
+                return;
+            }
+
+            circuitosCustomizados.push({ nome, potencia, tensao });
+            document.getElementById('novoNomeCircuito').value = "";
+            atualizarListaCircuitosTela();
+        }
+
+        function removerCircuitoCustomizado(index) {
+            circuitosCustomizados.splice(index, 1);
+            atualizarListaCircuitosTela();
+        }
+
+        function atualizarListaCircuitosTela() {
+            const ul = document.getElementById('listaCircuitosCustomizados');
+            if(!ul) return;
+            ul.innerHTML = "";
+            if(circuitosCustomizados.length === 0) {
+                ul.innerHTML = "<li style='color:#94a3b8;'>Nenhum circuito adicionado ainda.</li>";
+                return;
+            }
+            circuitosCustomizados.forEach((c, idx) => {
+                ul.innerHTML += `
+                    <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; background: white; padding: 4px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                        <span><strong>${c.nome}</strong> — ${c.potencia}W em ${c.tensao}V</span>
+                        <button type="button" onclick="removerCircuitoCustomizado(${idx})" style="background:#dc2626; color:white; border:none; border-radius:3px; padding:2px 6px; cursor:pointer; font-size:0.75rem;"><i class="fa-solid fa-trash"></i></button>
+                    </li>
+                `;
+            });
         }
 
         // TABELA NBR 5410 - Método de Instalação B1, Cobre, Isolação PVC 70°C
@@ -309,7 +366,6 @@
         }
 
         function dimensionarCircuitoUnico(nome, potenciaW, tensaoV, distanciaM, ehTrifasicoCarga = false) {
-            // Chuveiros e A/C residenciais comuns são monofásicos/bifásicos conectados a 220V fase-fase ou fase-neutro
             let ib = ehTrifasicoCarga ? (potenciaW / (Math.sqrt(3) * tensaoV)) : (potenciaW / tensaoV);
             
             let dj = disjuntoresPadrao[0];
@@ -330,8 +386,10 @@
             let caboQueda = tabelaCabosNBR.find(c => c.secao >= secaoMinQueda) || tabelaCabosNBR[tabelaCabosNBR.length - 1];
             
             let caboFinal = (caboQueda.secao > caboAmp.secao) ? caboQueda : caboAmp;
-            if (caboFinal.secao < 2.5 && nome.toLowerCase().indexOf('iluminação') === -1) {
-                caboFinal = tabelaCabosNBR.find(c => c.secao >= 2.5);
+            // NBR 5410: Seção mínima para circuitos de força/tomadas e iluminação é 1.5mm² para luz e 2.5mm² para força/tomadas
+            let minSecaoPermitida = (nome.toLowerCase().indexOf('iluminação') !== -1) ? 1.5 : 2.5;
+            if (caboFinal.secao < minSecaoPermitida) {
+                caboFinal = tabelaCabosNBR.find(c => c.secao >= minSecaoPermitida);
             }
 
             let iz = caboFinal[col];
@@ -353,21 +411,19 @@
             const tipo = document.getElementById('tipoUso').value;
             let rede = document.getElementById('tipoRede').value;
             const tensao = parseFloat(document.getElementById('tensaoVolts').value) || 220;
-            const distancia = parseFloat(document.getElementById('distanciaMetros').value) || 10;
+            const distancia = parseFloat(document.getElementById('distanciaMetros').value) || 15;
             const resDiv = document.getElementById('resultadoAvancado');
             resDiv.style.display = 'block';
 
             if (tipo === 'casa') {
-                const qChuveiros = parseInt(document.getElementById('qtdChuveiros').value) || 0;
-                const pChuveiro = parseFloat(document.getElementById('potChuveiroW').value) || 7500;
-                
-                const qAres = parseInt(document.getElementById('qtdAres').value) || 0;
-                const pArBtu = parseFloat(document.getElementById('potArBtu').value) || 12000;
-                const pArW = btuParaWatts(pArBtu);
-                
-                const wTugs = parseFloat(document.getElementById('wattsTugs').value) || 0;
+                if(circuitosCustomizados.length === 0) {
+                    alert("Adicione pelo menos um circuito na lista.");
+                    resDiv.style.display = 'none';
+                    return;
+                }
 
-                const potTotalInstalada = (qChuveiros * pChuveiro) + (qAres * pArW) + wTugs;
+                let potTotalInstalada = 0;
+                circuitosCustomizados.forEach(c => potTotalInstalada += c.potencia);
                 const potenciaKWInstalada = potTotalInstalada / 1000;
 
                 let sugestaoRede = "Monofásico";
@@ -376,8 +432,8 @@
                 if (potenciaKWInstalada > 8 && potenciaKWInstalada <= 20) {
                     sugestaoRede = "Bifásico (Recomendado para cargas entre 8kW e 20kW)";
                     redeCalculada = "bifasico";
-                } else if (potenciaKWInstalada > 20 || qChuveiros >= 3) {
-                    sugestaoRede = "Trifásico (Indispensável para carga instalada > 20kW ou múltiplos chuveiros)";
+                } else if (potenciaKWInstalada > 20 || circuitosCustomizados.length >= 5) {
+                    sugestaoRede = "Trifásico (Indispensável para carga instalada > 20kW ou muitos circuitos)";
                     redeCalculada = "trifasico";
                 } else {
                     sugestaoRede = "Monofásico ou Bifásico";
@@ -413,16 +469,9 @@
                 let caboGeral = tabelaCabosNBR.find(c => c[col] >= djGeral) || tabelaCabosNBR[tabelaCabosNBR.length - 1];
 
                 let listaCircuitos = [];
-                // Chuveiros e Ar-condicionados residenciais operam em circuito monofásico/bifásico unitário tipicamente em 220V
-                for(let i=1; i<=qChuveiros; i++) {
-                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Chuveiro ${i}`, pChuveiro, 220, distancia, false));
-                }
-                for(let i=1; i<=qAres; i++) {
-                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Ar Condicionado ${pArBtu} BTU (${i})`, pArW, 220, distancia, false));
-                }
-                if (wTugs > 0) {
-                    listaCircuitos.push(dimensionarCircuitoUnico(`Circuito Geral (Iluminação e Tomadas)`, wTugs, 127, distancia, false));
-                }
+                circuitosCustomizados.forEach(c => {
+                    listaCircuitos.push(dimensionarCircuitoUnico(c.nome, c.potencia, c.tensao, distancia, false));
+                });
 
                 const totalDisjuntores = listaCircuitos.length + 1;
 
