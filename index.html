@@ -10,57 +10,81 @@
     <link rel="manifest" href="manifest.json">
     <!-- FontAwesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0b132b;
+            --secondary: #1c2541;
+            --accent: #3a506b;
+            --success: #166534;
+            --bg-light: #f1f5f9;
+            --border: #cbd5e1;
+            --text-main: #1e293b;
+        }
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; margin: 0; background: var(--bg-light); color: var(--text-main); }
+        header { display: flex; align-items: center; gap: 12px; background: var(--primary); padding: 12px 20px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        header img { width: 45px; height: 45px; object-fit: contain; border-radius: 4px; background: white; padding: 2px; }
+        main { padding: 15px; max-width: 950px; margin: 0 auto; }
+        .card { background: white; padding: 18px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        label { font-weight: bold; font-size: 0.85rem; display: block; margin-bottom: 5px; }
+        select, input { width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.9rem; }
+        button { cursor: pointer; font-weight: bold; border: none; border-radius: 6px; padding: 10px 15px; }
+        .btn-primary { background: var(--primary); color: white; width: 100%; font-size: 1rem; }
+        .btn-success { background: var(--success); color: white; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+        table { width: 100%; text-align: left; border-collapse: collapse; font-size: 0.85rem; background: white; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
+        th, td { padding: 9px; border-bottom: 1px solid #e2e8f0; }
+        th { background: var(--primary); color: white; }
+    </style>
 </head>
-<body style="font-family: Arial, sans-serif; margin: 0; background: #f1f5f9; color: #1e293b;">
+<body>
 
-    <!-- CABEÇALHO COM A LOGO DA EMPRESA -->
-    <header style="display: flex; align-items: center; gap: 12px; background: #0b132b; padding: 12px 20px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <img src="Logo-Pai.png" alt="Clademir Bertol Elétrica" style="width: 45px; height: 45px; object-fit: contain; border-radius: 4px; background: white; padding: 2px;">
+    <header>
+        <img src="Logo-Pai.png" alt="Clademir Bertol Elétrica">
         <div>
             <h1 style="font-size: 1.05rem; margin: 0;">Clademir Bertol Elétrica</h1>
-            <span style="font-size: 0.75rem; color: #94a3b8;">Calculadora & Enciclopédia Técnica</span>
+            <span style="font-size: 0.75rem; color: #94a3b8;">Calculadora & Enciclopédia Técnica de Automação</span>
         </div>
     </header>
 
-    <main style="padding: 15px; max-width: 900px; margin: 0 auto;">
-        
+    <main>
         <!-- SELEÇÃO DE MÓDULO -->
-        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
-            <label style="font-weight: bold; font-size: 0.85rem;">Selecione o Tipo de Aplicação:</label>
-            <select id="tipoUso" onchange="alternarCamposCalculadora()" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #cbd5e1; border-radius: 4px;">
-                <option value="casa">Dimensionamento Residencial Completo (Múltiplos Circuitos)</option>
-                <option value="geral">Equipamento ou Circuito Único (Watts)</option>
-                <option value="ar">Ar Condicionado (BTUs)</option>
+        <div class="card">
+            <label>Selecione o Tipo de Aplicação:</label>
+            <select id="tipoUso" onchange="alternarCamposCalculadora()">
+                <option value="casa">Dimensionamento Residencial Completo (Múltiplos Circuitos & Demanda)</option>
+                <option value="geral">Equipamento ou Circuito Único Isolado (Watts)</option>
+                <option value="ar">Ar Condicionado (Conversão de BTUs & Dimensionamento)</option>
             </select>
         </div>
 
         <!-- CONFIGURAÇÕES DE REDE E DISTÂNCIA -->
-        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+        <div class="card grid-3">
             <div>
-                <label style="font-size: 0.85rem; font-weight: bold;">Tipo de Rede Atual:</label>
-                <select id="tipoRede" style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                <label>Tipo de Rede Atual:</label>
+                <select id="tipoRede">
                     <option value="bifasico">Bifásico (2F + N)</option>
                     <option value="trifasico">Trifásico (3F + N)</option>
                     <option value="monofasico">Monofásico (1F + N)</option>
                 </select>
             </div>
             <div>
-                <label style="font-size: 0.85rem; font-weight: bold;">Tensão Base (Volts):</label>
-                <input type="number" id="tensaoVolts" value="220" style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
+                <label>Tensão Base (Volts):</label>
+                <input type="number" id="tensaoVolts" value="220">
             </div>
             <div>
-                <label style="font-size: 0.85rem; font-weight: bold;">Distância do QDC (m):</label>
-                <input type="number" id="distanciaMetros" value="15" style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
+                <label>Distância do QDC (m):</label>
+                <input type="number" id="distanciaMetros" value="15">
             </div>
         </div>
 
         <!-- PAINEL ESPECÍFICO PARA RESIDENCIAL -->
-        <div class="campo-casa" style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 20px; display: grid; gap: 12px;">
-            <h3 style="font-size: 1rem; color: #0b132b; margin: 0;"><i class="fa-solid fa-list-check"></i> Adicionar Circuitos ao Quadro</h3>
+        <div class="card campo-casa" style="display: grid; gap: 12px;">
+            <h3 style="font-size: 1rem; color: var(--primary); margin: 0;"><i class="fa-solid fa-list-check"></i> Adicionar Circuitos ao Quadro de Distribuição</h3>
             <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 8px; align-items: end;">
                 <div>
-                    <label style="font-size: 0.75rem; font-weight: bold;">Nome do Circuito / Equipamento:</label>
-                    <input type="text" id="novoNomeCircuito" list="sugestoesCircuitos" placeholder="Selecione ou digite..." style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
+                    <label>Nome do Circuito / Equipamento:</label>
+                    <input type="text" id="novoNomeCircuito" list="sugestoesCircuitos" placeholder="Ex: Chuveiro, Iluminação...">
                     <datalist id="sugestoesCircuitos">
                         <option value="Chuveiro">
                         <option value="Ar Condicionado">
@@ -69,32 +93,66 @@
                         <option value="Iluminação">
                         <option value="Forno Elétrico">
                         <option value="Máquina de Lavar">
+                        <option value="Motor Portão">
                     </datalist>
                 </div>
                 <div>
-                    <label style="font-size: 0.75rem; font-weight: bold;">Potência (Watts):</label>
-                    <input type="number" id="novoPotCircuito" placeholder="Ex: 5000" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
+                    <label>Potência (W):</label>
+                    <input type="number" id="novoPotCircuito" placeholder="Ex: 5500">
                 </div>
                 <div>
-                    <label style="font-size: 0.75rem; font-weight: bold;">Tensão (V):</label>
-                    <select id="novoTensaoCircuito" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                    <label>Tensão (V):</label>
+                    <select id="novoTensaoCircuito">
                         <option value="220">220V</option>
                         <option value="127">127V</option>
                         <option value="380">380V</option>
                     </select>
                 </div>
-                <button type="button" onclick="adicionarCircuitoCustomizado()" style="background: #166534; color: white; border: none; padding: 9px 14px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-plus"></i></button>
+                <button type="button" class="btn-success" onclick="adicionarCircuitoCustomizado()"><i class="fa-solid fa-plus"></i></button>
             </div>
             
-            <div style="font-size: 0.85rem; font-weight: bold; margin-top: 5px;">Circuitos na Lista para Dimensionamento:</div>
-            <ul id="listaCircuitosCustomizados" style="list-style: none; padding: 0; margin: 0; display: grid; gap: 6px;">
-                <!-- Preenchido via JS -->
-            </ul>
+            <label style="margin-top: 5px;">Circuitos na Lista para Dimensionamento:</label>
+            <ul id="listaCircuitosCustomizados" style="list-style: none; padding: 0; margin: 0; display: grid; gap: 6px;"></ul>
+        </div>
+
+        <!-- PAINEL ESPECÍFICO PARA AR CONDICIONADO -->
+        <div class="card campo-ar" style="display: none; gap: 12px;">
+            <h3 style="font-size: 1rem; color: var(--primary); margin: 0;"><i class="fa-solid fa-snowflake"></i> Dimensionamento de Ar Condicionado</h3>
+            <div class="grid-3">
+                <div>
+                    <label>Capacidade (BTUs):</label>
+                    <select id="btuAr">
+                        <option value="9000">9.000 BTUs</option>
+                        <option value="12000" selected>12.000 BTUs</option>
+                        <option value="18000">18.000 BTUs</option>
+                        <option value="24000">24.000 BTUs</option>
+                        <option value="30000">30.000 BTUs</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Tecnologia:</label>
+                    <select id="tecnologiaAr">
+                        <option value="inverter">Inverter (Mais econômico)</option>
+                        <option value="convencional">Convencional / Standard</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAINEL CIRCUITO ÚNICO -->
+        <div class="card campo-geral" style="display: none; gap: 12px;">
+            <h3 style="font-size: 1rem; color: var(--primary); margin: 0;"><i class="fa-solid fa-bolt"></i> Parâmetros do Circuito Isolado</h3>
+            <div class="grid-3">
+                <div>
+                    <label>Potência do Equipamento (Watts):</label>
+                    <input type="number" id="potenciaUnicaGeral" value="3000">
+                </div>
+            </div>
         </div>
 
         <!-- BOTÃO DE CALCULAR -->
-        <button id="btnCalcularAvancado" type="button" style="width: 100%; background: #0b132b; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-bottom: 20px;">
-            <i class="fa-solid fa-calculator"></i> Calcular Dimensionamento Completo
+        <button id="btnCalcularAvancado" type="button" class="btn-primary" style="margin-bottom: 20px;">
+            <i class="fa-solid fa-calculator"></i> Executar Dimensionamento Técnico Completo
         </button>
 
         <!-- RESULTADOS -->
@@ -102,20 +160,15 @@
 
         <!-- ABA DE ENCICLOPÉDIA TÉCNICA E GUIA DE LIGAÇÕES -->
         <div id="conteudoEnciclopediaContainer"></div>
-
     </main>
 
-    <!-- SCRIPTS -->
     <script src="calc.js"></script>
     <script src="enciclopedia.js"></script>
     <script>
         window.onload = function() {
-            if(typeof carregarEnciclopediaTecnica === 'function') {
-                carregarEnciclopediaTecnica();
-            }
-            if(typeof alternarCamposCalculadora === 'function') {
-                alternarCamposCalculadora();
-            }
+            if(typeof carregarEnciclopediaTecnica === 'function') carregarEnciclopediaTecnica();
+            if(typeof alternarCamposCalculadora === 'function') alternarCamposCalculadora();
+            document.getElementById('btnCalcularAvancado').addEventListener('click', executarCalculoCompleto);
         };
     </script>
 </body>
