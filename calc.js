@@ -1,3 +1,48 @@
+/**
+ * ---------------------------------------------------------------------------
+ * GUIA TÉCNICO DE LIGAÇÕES E CONFIGURAÇÕES DE REDE
+ * ---------------------------------------------------------------------------
+ * 1. LIGAÇÃO ESTRELA (Y / Y-connection):
+ *    - Descrição: As três bobinas/cargas têm uma ponta unida a um ponto central 
+ *      comum (Neutro) e as outras três pontas livres recebem as fases (L1, L2, L3).
+ *    - Exemplo Visual:
+ *           [ L1 ] -> (Bobina A) -> |
+ *           [ L2 ] -> (Bobina B) -> +---> [ Ponto Central / Neutro ]
+ *           [ L3 ] -> (Bobina C) -> |
+ * 
+ * 2. LIGAÇÃO TRIÂNGULO (Δ / Delta):
+ *    - Descrição: O fim de cada bobina conecta-se ao início da seguinte, formando
+ *      um circuito fechado em triângulo. Cada vértice recebe uma fase. Sem neutro.
+ *    - Exemplo Visual:
+ *           [ L1 ] ----- (Bobina A) ----- [ L2 ]
+ *              |                             |
+ *              --------- (Bobina C) ---------|
+ *                             |
+ *                         [ L3 ]
+ * 
+ * 3. LIGAÇÃO EM SÉRIE:
+ *    - Descrição: Componentes ligados um após o outro, com apenas um caminho 
+ *      para a corrente. A tensão se divide e a corrente é a mesma.
+ *    - Exemplo Visual:
+ *           (+) ---[ Comp 1 ]---[ Comp 2 ]---[ Comp 3 ]--- (-)
+ * 
+ * 4. LIGAÇÃO EM PARALELO:
+ *    - Descrição: Todos os inícios juntos e todos os fins juntos. Múltiplos 
+ *      caminhos para a corrente; a tensão permanece igual em cada ramo.
+ *    - Exemplo Visual:
+ *                 +---[ Comp 1 ]---+
+ *                 |                |
+ *           (+) --+---[ Comp 2 ]---+-- (-)
+ *                 |                |
+ *                 +---[ Comp 3 ]---+
+ * 
+ * 5. PADRÃO 220V (Fase + Neutro):
+ *    - Em muitas regiões (como SC), redes monofásicas entregam 220V utilizando 
+ *      um condutor Fase e um condutor Neutro. O cálculo de queda de tensão 
+ *      considera K = 2.0 (ida e volta).
+ * ---------------------------------------------------------------------------
+ */
+
 let circuitosCustomizados = [
     { nome: "Chuveiro 1", potencia: 7500, tensao: 220 },
     { nome: "Chuveiro 2", potencia: 7500, tensao: 220 },
@@ -114,7 +159,7 @@ function dimensionarCircuitoUnico(nome, potenciaW, tensaoV, distanciaM, ehTrifas
     }
 
     const deltaV = tensaoV * 0.04;
-    const K = ehTrifasicoCarga ? Math.sqrt(3) : 2.0;
+    const K = ehTrifasicoCarga ? Math.sqrt(3) : 2.0; // K=2.0 para monofásico/220V Fase+Neutro
     const secaoMinQueda = (K * distanciaM * ib) / (56 * deltaV);
 
     let caboQueda = tabelaCabosNBR.find(c => c.secao >= secaoMinQueda) || tabelaCabosNBR[tabelaCabosNBR.length - 1];
