@@ -36,13 +36,11 @@
         <!-- TELA PRINCIPAL: PAINEL DE CARDS -->
         <section id="painelMenu" class="dashboard-grid">
             
-            <!-- CAPA / BANNER DA LOGO NO TOPO -->
-            <div class="card-modulo" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #0b132b 0%, #1c2541 100%); padding: 25px 20px; text-align: center; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                <img src="./Logo-Pai.png" alt="Clademir Bertol - Elétrica & Automação" style="max-width: 280px; width: 100%; height: auto; object-fit: contain; background: #ffffff; padding: 10px 15px; border-radius: 8px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);" onerror="this.style.display='none'">
-                <p style="color: #cbd5e1; font-size: 0.9rem; margin: 0; font-weight: 500;">Selecione abaixo o módulo desejado para iniciar as operações.</p>
-            </div>
-
+            <!-- CARD 1: CALCULADORA COM A LOGO INCORPORADA -->
             <div class="card-modulo" onclick="abrirFerramenta('calcFerramenta')">
+                <div style="text-align: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0;">
+                    <img src="./Logo-Pai.png" alt="Clademir Bertol - Elétrica & Automação" style="max-width: 100%; height: auto; object-fit: contain; display: block; margin: 0 auto;" onerror="this.style.display='none'">
+                </div>
                 <div class="card-icon icon-calc"><i class="fa-solid fa-calculator"></i></div>
                 <h3>Calculadora & Dimensionamento NBR 5410</h3>
                 <p>Dimensionamento de entrada residencial, quadro de circuitos, disjuntores e ampacidade.</p>
