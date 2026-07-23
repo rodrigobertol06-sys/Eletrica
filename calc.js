@@ -77,7 +77,7 @@ function atualizarListaCircuitosTela() {
     circuitosCustomizados.forEach((c, idx) => {
         ul.innerHTML += `
             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; background: white; padding: 4px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
-                <span><strong>${c.nome}</strong> — ${c.potencia}W em ${c.tensao}V</span>
+                <span><strong>${c.nome}</strong> — ${c.potencia}W em ${c.tensao}V (${c.tensao === 220 ? 'Fase + Neutro' : 'Fase + Neutro'})</span>
                 <button type="button" onclick="removerCircuitoCustomizado(${idx})" style="background:#dc2626; color:white; border:none; border-radius:3px; padding:2px 6px; cursor:pointer; font-size:0.75rem;"><i class="fa-solid fa-trash"></i></button>
             </li>
         `;
@@ -100,6 +100,8 @@ const tabelaCabosNBR = [
 const disjuntoresPadrao = [10, 16, 20, 25, 32, 40, 50, 63, 70, 80, 100, 125, 160];
 
 function dimensionarCircuitoUnico(nome, potenciaW, tensaoV, distanciaM, ehTrifasicoCarga = false) {
+    // Para 220V monofásico (Fase + Neutro) ou 127V (Fase + Neutro), a divisão da corrente é direta por TensaoV * fdp (considerando fdp=1)
+    // Se for trifásico, divide por sqrt(3) * TensaoV
     let ib = ehTrifasicoCarga ? (potenciaW / (Math.sqrt(3) * tensaoV)) : (potenciaW / tensaoV);
     
     let dj = disjuntoresPadrao[0];
@@ -114,6 +116,7 @@ function dimensionarCircuitoUnico(nome, potenciaW, tensaoV, distanciaM, ehTrifas
     }
 
     const deltaV = tensaoV * 0.04;
+    // Fator K: Para circuitos monofásicos/bifásicos Fase+Neutro, consideram-se 2 condutores percorridos pela corrente (ida e volta), logo K = 2.0. Para trifásico, K = sqrt(3).
     const K = ehTrifasicoCarga ? Math.sqrt(3) : 2.0;
     const secaoMinQueda = (K * distanciaM * ib) / (56 * deltaV);
 
@@ -168,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const potDemanda = potTotalInstalada * fd;
 
-                // Verificação estrita de consistência de rede
                 let redeIdeal = "bifasico";
                 let textoRedeIdeal = "Bifásico (2F + N)";
                 if (potenciaKWInstalada > 25 || potDemanda > 15000) {
@@ -199,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     tipoDisjuntorTexto = "Bifásico (Bipolar)";
                 } else {
                     ibInstalado = potDemanda / tensaoBase;
-                    tipoDisjuntorTexto = "Monofásico (Unipolar)";
+                    tipoDisjuntorTexto = "Monofásico (Unipolar / Fase + Neutro)";
                 }
 
                 let djGeral = disjuntoresPadrao[0];
@@ -275,11 +277,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 let potenciaInstalada = (tipo === 'ar') ? (parseFloat(document.getElementById('inputBtus').value || 0) / 11) : (parseFloat(document.getElementById('potenciaWatts').value) || 0);
                 let ehTrifasico = (redeSelecionada === 'trifasico');
                 let resCircuito = dimensionarCircuitoUnico("Equipamento", potenciaInstalada, tensaoBase, distancia, ehTrifasico);
-                let tipoDjUnico = ehTrifasico ? 'Trifásico (Tripolar)' : (redeSelecionada === 'bifasico' ? 'Bifásico (Bipolar)' : 'Monofásico (Unipolar)');
+                let tipoDjUnico = ehTrifasico ? 'Trifásico (Tripolar)' : (redeSelecionada === 'bifasico' ? 'Bifásico (Bipolar)' : 'Monofásico / Fase + Neutro (Unipolar)');
 
                 resDiv.innerHTML = `
                     <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 18px; border-radius: 8px;">
-                        <h3 style="color: #0b132b; margin-bottom: 10px;"><i class="fa-solid fa-file-contract"></i> Relatório de Circuito Único (${tensaoBase}V)</h3>
+                        <h3 style="color: #0b132b; margin-bottom: 10px;"><i class="fa-solid fa-file-contract"></i> Relatório de Circuito Único (${tensaoBase}V - Fase + Neutro)</h3>
                         • <strong>Corrente Nominal (Ib):</strong> <span style="color:#d97706; font-weight:bold;">${resCircuito.ib.toFixed(1)} A</span><br>
                         • <strong>Disjuntor Sugerido:</strong> <span style="color:#2563eb; font-weight:bold;">${tipoDjUnico} de ${resCircuito.disjuntor} A</span> (Curva C)<br>
                         • <strong>Cabo Recomendado:</strong> <span style="color:#166534; font-weight:bold;">${resCircuito.caboSecao} mm²</span><br>
