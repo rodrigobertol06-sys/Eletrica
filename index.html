@@ -2,173 +2,358 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clademir Bertol Elétrica</title>
-    <!-- Ícone e PWA -->
-    <link rel="icon" type="image/png" href="Logo-Pai.png">
-    <link rel="apple-touch-icon" href="Logo-Pai.png">
-    <link rel="manifest" href="manifest.json">
-    <!-- FontAwesome para ícones -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Clademir Bertol - Elétrica & Automação</title>
+    <link rel="manifest" href="./manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #0b132b;
-            --secondary: #1c2541;
-            --accent: #3a506b;
-            --success: #166534;
-            --bg-light: #f1f5f9;
-            --border: #cbd5e1;
-            --text-main: #1e293b;
-        }
-        * { box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; margin: 0; background: var(--bg-light); color: var(--text-main); }
-        header { display: flex; align-items: center; gap: 12px; background: var(--primary); padding: 12px 20px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        header img { width: 45px; height: 45px; object-fit: contain; border-radius: 4px; background: white; padding: 2px; }
-        main { padding: 15px; max-width: 950px; margin: 0 auto; }
-        .card { background: white; padding: 18px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        label { font-weight: bold; font-size: 0.85rem; display: block; margin-bottom: 5px; }
-        select, input { width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.9rem; }
-        button { cursor: pointer; font-weight: bold; border: none; border-radius: 6px; padding: 10px 15px; }
-        .btn-primary { background: var(--primary); color: white; width: 100%; font-size: 1rem; }
-        .btn-success { background: var(--success); color: white; }
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-        table { width: 100%; text-align: left; border-collapse: collapse; font-size: 0.85rem; background: white; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
-        th, td { padding: 9px; border-bottom: 1px solid #e2e8f0; }
-        th { background: var(--primary); color: white; }
-    </style>
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
-    <header>
-        <img src="Logo-Pai.png" alt="Clademir Bertol Elétrica">
-        <div>
-            <h1 style="font-size: 1.05rem; margin: 0;">Clademir Bertol Elétrica</h1>
-            <span style="font-size: 0.75rem; color: #94a3b8;">Calculadora & Enciclopédia Técnica de Automação</span>
+    <!-- BARRA SUPERIOR -->
+    <header class="top-navbar">
+        <div class="nav-brand">
+            <img src="./Logo-Pai.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+            <div class="nav-titles">
+                <h1>Clademir Bertol</h1>
+                <p>Elétrica & Automação</p>
+            </div>
+        </div>
+        <div class="nav-badge">
+            <i class="fa-solid fa-bolt"></i> App v2.3
         </div>
     </header>
 
-    <main>
-        <!-- SELEÇÃO DE MÓDULO -->
-        <div class="card">
-            <label>Selecione o Tipo de Aplicação:</label>
-            <select id="tipoUso" onchange="alternarCamposCalculadora()">
-                <option value="casa">Dimensionamento Residencial Completo (Múltiplos Circuitos & Demanda)</option>
-                <option value="geral">Equipamento ou Circuito Único Isolado (Watts)</option>
-                <option value="ar">Ar Condicionado (Conversão de BTUs & Dimensionamento)</option>
-            </select>
-        </div>
+    <div class="container">
 
-        <!-- CONFIGURAÇÕES DE REDE E DISTÂNCIA -->
-        <div class="card grid-3">
-            <div>
-                <label>Tipo de Rede Atual:</label>
-                <select id="tipoRede">
-                    <option value="bifasico">Bifásico (2F + N)</option>
-                    <option value="trifasico">Trifásico (3F + N)</option>
-                    <option value="monofasico">Monofásico (1F + N)</option>
-                </select>
+        <!-- TELA PRINCIPAL: PAINEL DE CARDS -->
+        <section id="painelMenu" class="dashboard-grid">
+            
+            <div class="card-modulo" onclick="abrirFerramenta('calcFerramenta')">
+                <div class="card-icon icon-calc"><i class="fa-solid fa-calculator"></i></div>
+                <h3>Calculadora & Dimensionamento NBR 5410</h3>
+                <p>Dimensionamento de entrada residencial, quadro de circuitos, disjuntores e ampacidade.</p>
             </div>
-            <div>
-                <label>Tensão Base (Volts):</label>
-                <input type="number" id="tensaoVolts" value="220">
-            </div>
-            <div>
-                <label>Distância do QDC (m):</label>
-                <input type="number" id="distanciaMetros" value="15">
-            </div>
-        </div>
 
-        <!-- PAINEL ESPECÍFICO PARA RESIDENCIAL -->
-        <div class="card campo-casa" style="display: grid; gap: 12px;">
-            <h3 style="font-size: 1rem; color: var(--primary); margin: 0;"><i class="fa-solid fa-list-check"></i> Adicionar Circuitos ao Quadro de Distribuição</h3>
-            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 8px; align-items: end;">
-                <div>
-                    <label>Nome do Circuito / Equipamento:</label>
-                    <input type="text" id="novoNomeCircuito" list="sugestoesCircuitos" placeholder="Ex: Chuveiro, Iluminação...">
-                    <datalist id="sugestoesCircuitos">
-                        <option value="Chuveiro">
-                        <option value="Ar Condicionado">
-                        <option value="Torneira Elétrica">
-                        <option value="Tomadas Gerais (TUGs)">
-                        <option value="Iluminação">
-                        <option value="Forno Elétrico">
-                        <option value="Máquina de Lavar">
-                        <option value="Motor Portão">
-                    </datalist>
+            <div class="card-modulo" onclick="abrirFerramenta('enciclopediaFerramenta')">
+                <div class="card-icon icon-auto"><i class="fa-solid fa-book-atlas"></i></div>
+                <h3>Enciclopédia & Guia Técnico</h3>
+                <p>Curvas de Disjuntores, DPS, IDR/DR, Sopa de Letrinhas e Tabela de Cabos e Potências.</p>
+            </div>
+
+            <div class="card-modulo" onclick="abrirFerramenta('guiaFerramenta')">
+                <div class="card-icon icon-guia"><i class="fa-solid fa-diagram-project"></i></div>
+                <h3>Esquemas Lineart</h3>
+                <p>Diagramas vetoriais com imagens reais e fios coloridos.</p>
+            </div>
+
+            <div class="card-modulo" onclick="abrirFerramenta('orcFerramenta')">
+                <div class="card-icon icon-orc"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                <h3>Emitir Orçamento</h3>
+                <p>Registro de clientes, seleção de serviços com sugestão de valores e salvamento.</p>
+            </div>
+
+        </section>
+
+
+        <!-- ================= FERRAMENTA 1: CALCULADORA NBR 5410 ================= -->
+        <div id="calcFerramenta" class="ferramenta-container" style="display:none;">
+            <div class="ferramenta-header">
+                <h2><i class="fa-solid fa-calculator"></i> Dimensionamento Elétrico Avançado (NBR 5410)</h2>
+                <button class="btn-fechar" onclick="fecharFerramentas()"><i class="fa-solid fa-xmark"></i> Fechar</button>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Modo de Cálculo / Carga:</label>
+                    <select id="tipoUso" onchange="alternarCamposCalculadora()">
+                        <option value="geral">Carga Geral (Equipamento / Circuito Único)</option>
+                        <option value="ar">Ar Condicionado Individual (BTU -> Watts)</option>
+                        <option value="casa" selected>Entrada Residencial Completa (Quadro Dinâmico)</option>
+                    </select>
                 </div>
-                <div>
-                    <label>Potência (W):</label>
-                    <input type="number" id="novoPotCircuito" placeholder="Ex: 5500">
+                
+                <div class="form-group">
+                    <label>Tipo de Rede Atual / Selecionada:</label>
+                    <select id="tipoRede">
+                        <option value="monofasico">Monofásico (1F + N)</option>
+                        <option value="bifasico" selected>Bifásico (2F + N)</option>
+                        <option value="trifasico">Trifásico (3F + N)</option>
+                    </select>
                 </div>
-                <div>
-                    <label>Tensão (V):</label>
-                    <select id="novoTensaoCircuito">
-                        <option value="220">220V</option>
+
+                <div class="form-group">
+                    <label>Tensão de Linha / Fase (Volts):</label>
+                    <select id="tensaoVolts">
                         <option value="127">127V</option>
+                        <option value="220" selected>220V</option>
                         <option value="380">380V</option>
                     </select>
                 </div>
-                <button type="button" class="btn-success" onclick="adicionarCircuitoCustomizado()"><i class="fa-solid fa-plus"></i></button>
+
+                <!-- CAMPO CARGA GERAL -->
+                <div class="form-group campo-geral" style="display:none;">
+                    <label>Potência Total (Watts):</label>
+                    <input type="number" id="potenciaWatts" placeholder="Ex: 10000" value="10000">
+                </div>
+
+                <!-- CAMPO AR CONDICIONADO -->
+                <div class="form-group campo-ar" style="display:none;">
+                    <label>Capacidade em BTUs:</label>
+                    <input type="number" id="inputBtus" placeholder="Ex: 12000" value="12000">
+                </div>
+
+                <!-- CAMPOS ENTRADA RESIDENCIAL / CIRCUITOS PERSONALIZADOS -->
+                <div class="form-group campo-casa" style="grid-column: span 3; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                    <h4 style="margin-bottom: 10px; color: #0b132b;"><i class="fa-solid fa-list-ul"></i> Adicionar Circuitos ao Quadro</h4>
+                    
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px; align-items: end;">
+                        <div>
+                            <label style="font-size:0.85rem;">Nome do Circuito / Equipamento:</label>
+                            <div style="display: flex; gap: 5px;">
+                                <input type="text" id="novoNomeCircuito" list="sugestoesCircuitos" placeholder="Selecione ou digite..." style="width:100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; background: white;">
+                                <button type="button" onclick="adicionarNovaSugestaoDatalist()" title="Adicionar novo item à lista" style="background: #334155; color: white; border: none; padding: 0 12px; border-radius: 4px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                            <datalist id="sugestoesCircuitos">
+                                <option value="Chuveiro Principal">
+                                <option value="Chuveiro Superior">
+                                <option value="Ar Condicionado Inverter">
+                                <option value="Torneira Elétrica">
+                                <option value="Iluminação Cozinha">
+                                <option value="Tomadas Gerais (TUGs)">
+                                <option value="Forno Elétrico Embutido">
+                                <option value="Máquina de Lavar">
+                                <option value="Bomba de Piscina">
+                                <option value="Portão Eletrônico">
+                            </datalist>
+                        </div>
+                        <div>
+                            <label style="font-size:0.85rem;">Potência (Watts):</label>
+                            <input type="number" id="novoPotCircuito" placeholder="Ex: 7500" value="5000" style="width:100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                        </div>
+                        <div>
+                            <label style="font-size:0.85rem;">Tensão (V):</label>
+                            <select id="novoTensaoCircuito" style="width:100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; background:white;">
+                                <option value="220" selected>220V</option>
+                                <option value="127">127V</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button type="button" onclick="adicionarCircuitoCustomizado()" style="background: #166534; color: white; border: none; padding: 9px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <strong style="font-size: 0.9rem; color: #334155;">Circuitos na Lista para Dimensionamento:</strong>
+                        <ul id="listaCircuitosCustomizados" style="margin-top: 5px; padding-left: 20px; font-size: 0.88rem; color: #334155;">
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form-group" style="grid-column: span 3;">
+                    <label>Distância do Quadro à Carga / Ramal (Metros):</label>
+                    <input type="number" id="distanciaMetros" placeholder="Ex: 15" value="15">
+                </div>
+            </div>
+
+            <button class="btn-acao" id="btnCalcularAvancado">Calcular Parâmetros & NBR 5410</button>
+            
+            <div id="resultadoAvancado" class="resultado-box" style="display:none; margin-top:20px;"></div>
+        </div>
+
+
+        <!-- ================= FERRAMENTA 2: ENCICLOPÉDIA & GUIA TÉCNICO ================= -->
+        <div id="enciclopediaFerramenta" class="ferramenta-container" style="display:none;">
+            <div class="ferramenta-header">
+                <h2><i class="fa-solid fa-book-atlas"></i> Enciclopédia & Guia Técnico</h2>
+                <button class="btn-fechar" onclick="fecharFerramentas()"><i class="fa-solid fa-xmark"></i> Fechar</button>
+            </div>
+
+            <!-- O conteúdo técnico será carregado dinamicamente via enciclopedia.js -->
+            <div id="conteudoEnciclopediaContainer"></div>
+        </div>
+
+
+        <!-- ================= FERRAMENTA 3: GUIA DE LIGAÇÕES VETORIAIS ================= -->
+        <div id="guiaFerramenta" class="ferramenta-container" style="display:none;">
+            <div class="ferramenta-header">
+                <h2><i class="fa-solid fa-diagram-project"></i> Diagramas Vetoriais (Interativos)</h2>
+                <button class="btn-fechar" onclick="fecharFerramentas()"><i class="fa-solid fa-xmark"></i> Fechar</button>
+            </div>
+
+            <div class="bloco-tecnico" style="overflow-x: auto;">
+                <h4>Partida Direta de Motor Trifásico</h4>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">
+                    Diagrama de potência renderizando as suas próprias imagens. Os fios interligam os bornes principais.
+                </p>
+                
+                <svg width="600" height="600" xmlns="http://www.w3.org/2000/svg" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;">
+                    <text x="60" y="30" font-weight="bold" font-family="sans-serif">R</text>
+                    <text x="110" y="30" font-weight="bold" font-family="sans-serif">S</text>
+                    <text x="160" y="30" font-weight="bold" font-family="sans-serif">T</text>
+
+                    <path d="M 65 40 L 65 70" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M 115 40 L 115 70" stroke="#1e293b" stroke-width="4"/>
+                    <path d="M 165 40 L 165 70" stroke="#2563eb" stroke-width="4"/>
+
+                    <image href="./Disjuntor_trifasico.png" x="40" y="70" width="150" height="120" />
+
+                    <path d="M 65 190 L 65 240" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M 115 190 L 115 240" stroke="#1e293b" stroke-width="4"/>
+                    <path d="M 165 190 L 165 240" stroke="#2563eb" stroke-width="4"/>
+
+                    <image href="./Contatora.png" x="40" y="240" width="150" height="120" />
+
+                    <path d="M 65 360 L 65 410" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M 115 360 L 115 410" stroke="#1e293b" stroke-width="4"/>
+                    <path d="M 165 360 L 165 410" stroke="#2563eb" stroke-width="4"/>
+
+                    <image href="./Rele_sobrecarga.png" x="40" y="410" width="150" height="120" />
+
+                    <path d="M 65 530 L 65 560 L 300 560 L 300 520" fill="transparent" stroke="#dc2626" stroke-width="4"/>
+                    <path d="M 115 530 L 115 550 L 340 550 L 340 520" fill="transparent" stroke="#1e293b" stroke-width="4"/>
+                    <path d="M 165 530 L 165 540 L 380 540 L 380 520" fill="transparent" stroke="#2563eb" stroke-width="4"/>
+
+                    <circle cx="340" cy="460" r="50" fill="#dcfce7" stroke="#166534" stroke-width="3"/>
+                    <text x="315" y="468" font-size="24" font-weight="bold" fill="#166534" font-family="sans-serif">M 3~</text>
+                </svg>
+            </div>
+        </div>
+
+
+        <!-- ================= FERRAMENTA 4: ORÇAMENTOS ================= -->
+        <div id="orcFerramenta" class="ferramenta-container" style="display:none;">
+            <div class="ferramenta-header">
+                <h2><i class="fa-solid fa-file-invoice-dollar"></i> Emitir Novo Orçamento</h2>
+                <button class="btn-fechar" onclick="fecharFerramentas()"><i class="fa-solid fa-xmark"></i> Fechar</button>
             </div>
             
-            <label style="margin-top: 5px;">Circuitos na Lista para Dimensionamento:</label>
-            <ul id="listaCircuitosCustomizados" style="list-style: none; padding: 0; margin: 0; display: grid; gap: 6px;"></ul>
+            <form id="formOrcamento">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nome do Cliente / Empresa:</label>
+                        <input type="text" id="clienteNome" required placeholder="Nome completo">
+                    </div>
+                    <div class="form-group">
+                        <label>CPF ou CNPJ:</label>
+                        <input type="text" id="clienteDoc" placeholder="000.000.000-00">
+                    </div>
+                    <div class="form-group">
+                        <label>Endereço do Local:</label>
+                        <input type="text" id="clienteEnd" placeholder="Rua, Bairro, Cidade">
+                    </div>
+                </div>
+
+                <hr style="border:0; border-top:1px solid #e2e8f0; margin: 15px 0 20px 0;">
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Tipo de Serviço Principal:</label>
+                        <select id="servicoPrincipal" onchange="atualizarOpcoesServico()">
+                            <option value="eletrica">Elétrica</option>
+                            <option value="gerais">Serviços Gerais</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Especificação do Serviço:</label>
+                        <select id="servicoEspecifico" onchange="atualizarSugestaoPreco()">
+                        </select>
+                        <div id="alertaPreco" class="alerta-preco">
+                            <i class="fa-solid fa-circle-info"></i> Valor sugerido: <br>
+                            <strong id="valorSugeridoText">R$ 0,00 - R$ 0,00</strong> (un/m²)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Valor Total (R$):</label>
+                        <input type="number" step="0.01" id="valorTotal" required placeholder="0.00">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-acao" id="btnSalvar">Salvar Orçamento</button>
+            </form>
         </div>
 
-        <!-- PAINEL ESPECÍFICO PARA AR CONDICIONADO -->
-        <div class="card campo-ar" style="display: none; gap: 12px;">
-            <h3 style="font-size: 1rem; color: var(--primary); margin: 0;"><i class="fa-solid fa-snowflake"></i> Dimensionamento de Ar Condicionado</h3>
-            <div class="grid-3">
-                <div>
-                    <label>Capacidade (BTUs):</label>
-                    <select id="btuAr">
-                        <option value="9000">9.000 BTUs</option>
-                        <option value="12000" selected>12.000 BTUs</option>
-                        <option value="18000">18.000 BTUs</option>
-                        <option value="24000">24.000 BTUs</option>
-                        <option value="30000">30.000 BTUs</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Tecnologia:</label>
-                    <select id="tecnologiaAr">
-                        <option value="inverter">Inverter (Mais econômico)</option>
-                        <option value="convencional">Convencional / Standard</option>
-                    </select>
-                </div>
-            </div>
-        </div>
+    </div>
 
-        <!-- PAINEL CIRCUITO ÚNICO -->
-        <div class="card campo-geral" style="display: none; gap: 12px;">
-            <h3 style="font-size: 1rem; color: var(--primary); margin: 0;"><i class="fa-solid fa-bolt"></i> Parâmetros do Circuito Isolado</h3>
-            <div class="grid-3">
-                <div>
-                    <label>Potência do Equipamento (Watts):</label>
-                    <input type="number" id="potenciaUnicaGeral" value="3000">
-                </div>
-            </div>
-        </div>
-
-        <!-- BOTÃO DE CALCULAR -->
-        <button id="btnCalcularAvancado" type="button" class="btn-primary" style="margin-bottom: 20px;">
-            <i class="fa-solid fa-calculator"></i> Executar Dimensionamento Técnico Completo
-        </button>
-
-        <!-- RESULTADOS -->
-        <div id="resultadoAvancado" style="display: none; margin-bottom: 25px;"></div>
-
-        <!-- ABA DE ENCICLOPÉDIA TÉCNICA E GUIA DE LIGAÇÕES -->
-        <div id="conteudoEnciclopediaContainer"></div>
-    </main>
-
-    <script src="calc.js"></script>
-    <script src="enciclopedia.js"></script>
+    <!-- Scripts Modulares -->
+    <script src="./calc.js"></script>
+    <script src="./enciclopedia.js"></script>
     <script>
+        function abrirFerramenta(idFerramenta) {
+            document.getElementById('painelMenu').style.display = 'none';
+            document.querySelectorAll('.ferramenta-container').forEach(f => f.style.display = 'none');
+            document.getElementById(idFerramenta).style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            if(idFerramenta === 'calcFerramenta') {
+                atualizarListaCircuitosTela();
+                document.getElementById('btnCalcularAvancado').click();
+            }
+            if(idFerramenta === 'enciclopediaFerramenta') {
+                carregarEnciclopediaTecnica();
+            }
+        }
+
+        function fecharFerramentas() {
+            document.querySelectorAll('.ferramenta-container').forEach(f => f.style.display = 'none');
+            document.getElementById('painelMenu').style.display = 'grid';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Lógica do módulo de orçamentos (mantida leve no index)
+        const tabelaPrecos = {
+            "Instalação de Chuveiro": { min: 80.00, max: 150.00 },
+            "Instalação de Tomadas / Fotocélulas": { min: 35.00, max: 80.00 },
+            "Interruptores (Ponto)": { min: 35.00, max: 70.00 },
+            "Instalação de Quadro de Distribuição": { min: 350.00, max: 900.00 },
+            "Montagem de Painel de Comandos": { min: 500.00, max: 2500.00 },
+            "Manutenção Preventiva Geral": { min: 150.00, max: 400.00 },
+        };
+
+        function atualizarOpcoesServico() {
+            const principal = document.getElementById('servicoPrincipal').value;
+            const especifica = document.getElementById('servicoEspecifico');
+            if(!especifica) return;
+            especifica.innerHTML = '';
+
+            let opcoes = (principal === 'eletrica') ? [
+                "Instalação de Chuveiro",
+                "Instalação de Tomadas / Fotocélulas",
+                "Interruptores (Ponto)",
+                "Instalação de Quadro de Distribuição",
+                "Montagem de Painel de Comandos"
+            ] : ["Manutenção Preventiva Geral"];
+
+            opcoes.forEach(opt => {
+                let el = document.createElement('option');
+                el.value = opt;
+                el.textContent = opt;
+                especifica.appendChild(el);
+            });
+            atualizarSugestaoPreco();
+        }
+
+        function atualizarSugestaoPreco() {
+            const servicoSelecionado = document.getElementById('servicoEspecifico').value;
+            const alertaBox = document.getElementById('alertaPreco');
+            const valorText = document.getElementById('valorSugeridoText');
+            if(!alertaBox || !valorText) return;
+
+            if(tabelaPrecos[servicoSelecionado]) {
+                const min = tabelaPrecos[servicoSelecionado].min.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                const max = tabelaPrecos[servicoSelecionado].max.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                valorText.innerHTML = `${min} até ${max}`;
+                alertaBox.style.display = 'block';
+            } else {
+                alertaBox.style.display = 'none';
+            }
+        }
+
         window.onload = function() {
-            if(typeof carregarEnciclopediaTecnica === 'function') carregarEnciclopediaTecnica();
-            if(typeof alternarCamposCalculadora === 'function') alternarCamposCalculadora();
-            document.getElementById('btnCalcularAvancado').addEventListener('click', executarCalculoCompleto);
+            atualizarOpcoesServico();
+            alternarCamposCalculadora();
         };
     </script>
 </body>
