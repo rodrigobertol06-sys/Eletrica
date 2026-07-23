@@ -100,8 +100,6 @@ const tabelaCabosNBR = [
 const disjuntoresPadrao = [10, 16, 20, 25, 32, 40, 50, 63, 70, 80, 100, 125, 160];
 
 function dimensionarCircuitoUnico(nome, potenciaW, tensaoV, distanciaM, ehTrifasicoCarga = false) {
-    // Para 220V monofásico (Fase + Neutro) ou 127V (Fase + Neutro), a divisão da corrente é direta por TensaoV * fdp (considerando fdp=1)
-    // Se for trifásico, divide por sqrt(3) * TensaoV
     let ib = ehTrifasicoCarga ? (potenciaW / (Math.sqrt(3) * tensaoV)) : (potenciaW / tensaoV);
     
     let dj = disjuntoresPadrao[0];
@@ -116,7 +114,6 @@ function dimensionarCircuitoUnico(nome, potenciaW, tensaoV, distanciaM, ehTrifas
     }
 
     const deltaV = tensaoV * 0.04;
-    // Fator K: Para circuitos monofásicos/bifásicos Fase+Neutro, consideram-se 2 condutores percorridos pela corrente (ida e volta), logo K = 2.0. Para trifásico, K = sqrt(3).
     const K = ehTrifasicoCarga ? Math.sqrt(3) : 2.0;
     const secaoMinQueda = (K * distanciaM * ib) / (56 * deltaV);
 
@@ -178,14 +175,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     textoRedeIdeal = "Trifásico (3F + N)";
                 } else if (potenciaKWInstalada <= 5) {
                     redeIdeal = "monofasico";
-                    textoRedeIdeal = "Monofásico (1F + N)";
+                    textoRedeIdeal = "Monofásico / 220V (1F + N)";
                 }
 
                 let alertaInconsistencia = "";
                 if (redeSelecionada === 'monofasico' && potenciaKWInstalada > 6) {
                     alertaInconsistencia = `
                         <div style="background: #fef3c7; border: 1px solid #f59e0b; padding: 12px; border-radius: 6px; margin-bottom: 15px; color: #92400e;">
-                            <strong>⚠️ ALERTA DE INCONSISTÊNCIA DE REDE:</strong> Você selecionou o tipo de rede <em>Monofásico</em>, mas a potência instalada (${potenciaKWInstalada.toFixed(1)} kW) excede o limite seguro para monofásico. O ideal técnico é alterar o campo <strong>Tipo de Rede Atual</strong> para <strong>${textoRedeIdeal}</strong>.
+                            <strong>⚠️ ALERTA DE INCONSISTÊNCIA DE REDE:</strong> Você selecionou o tipo de rede <em>Monofásico</em>, mas a potência instalada (${potenciaKWInstalada.toFixed(1)} kW) excede o limite seguro. O ideal técnico é alterar para <strong>${textoRedeIdeal}</strong>.
                         </div>
                     `;
                 }
@@ -201,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     tipoDisjuntorTexto = "Bifásico (Bipolar)";
                 } else {
                     ibInstalado = potDemanda / tensaoBase;
-                    tipoDisjuntorTexto = "Monofásico (Unipolar / Fase + Neutro)";
+                    tipoDisjuntorTexto = "Monofásico / 220V (Unipolar - Fase + Neutro)";
                 }
 
                 let djGeral = disjuntoresPadrao[0];
@@ -258,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.9rem; background: white; border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1;">
                                 <thead style="background: #0b132b; color: white;">
                                     <tr>
-                                        <th style="padding: 8px;">Circuito</th>
+                                        <th style="padding: 8px;">Circuitos</th>
                                         <th style="padding: 8px;">Potência</th>
                                         <th style="padding: 8px;">Corrente</th>
                                         <th style="padding: 8px;">Disjuntor</th>
@@ -277,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let potenciaInstalada = (tipo === 'ar') ? (parseFloat(document.getElementById('inputBtus').value || 0) / 11) : (parseFloat(document.getElementById('potenciaWatts').value) || 0);
                 let ehTrifasico = (redeSelecionada === 'trifasico');
                 let resCircuito = dimensionarCircuitoUnico("Equipamento", potenciaInstalada, tensaoBase, distancia, ehTrifasico);
-                let tipoDjUnico = ehTrifasico ? 'Trifásico (Tripolar)' : (redeSelecionada === 'bifasico' ? 'Bifásico (Bipolar)' : 'Monofásico / Fase + Neutro (Unipolar)');
+                let tipoDjUnico = ehTrifasico ? 'Trifásico (Tripolar)' : 'Monofásico / 220V (Unipolar - Fase + Neutro)';
 
                 resDiv.innerHTML = `
                     <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 18px; border-radius: 8px;">
